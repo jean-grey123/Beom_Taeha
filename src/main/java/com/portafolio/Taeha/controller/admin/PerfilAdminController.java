@@ -60,6 +60,10 @@ public class PerfilAdminController {
             @RequestParam(value = "archivoFoto", required = false)
             MultipartFile archivoFoto) {
 
+        System.out.println("========== GUARDAR PERFIL ==========");
+        System.out.println("NOMBRE RECIBIDO: " + perfil.getNombre());
+        System.out.println("========== FIN ==========");
+
 
         Perfil perfilGuardar;
 
@@ -172,7 +176,16 @@ public class PerfilAdminController {
         // GUARDAR EN MYSQL
         // ======================================
 
+        System.out.println("======================================");
+        System.out.println("PERFIL QUE SE VA A GUARDAR");
+        System.out.println("ID: " + perfilGuardar.getId());
+        System.out.println("NOMBRE: " + perfilGuardar.getNombre());
+        System.out.println("APELLIDOS: " + perfilGuardar.getApellidos());
+        System.out.println("FOTO: " + perfilGuardar.getFoto());
+        System.out.println("======================================");
+
         perfilRepository.save(perfilGuardar);
+
 
 
         // ======================================
