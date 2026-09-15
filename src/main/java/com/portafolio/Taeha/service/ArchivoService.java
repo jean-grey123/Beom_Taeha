@@ -145,10 +145,36 @@ public class ArchivoService {
 
     public Resource cargarImagen(String nombre) {
 
-        return cargar(
+        // Primero busca en uploads/imagenes
+        Resource recurso = cargar(
                 carpetaImagenes,
                 nombre
         );
+
+        if (recurso != null) {
+            return recurso;
+        }
+
+        // Si no está ahí, busca en static/imagenes
+        try {
+
+            Resource recursoStatic =
+                    new org.springframework.core.io.ClassPathResource(
+                            "static/imagenes/" + nombre
+                    );
+
+            if (recursoStatic.exists()
+                    && recursoStatic.isReadable()) {
+
+                return recursoStatic;
+            }
+
+        } catch (Exception e) {
+
+            return null;
+        }
+
+        return null;
     }
 
 
