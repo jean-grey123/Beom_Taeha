@@ -18,6 +18,7 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
           rel="stylesheet">
 
@@ -237,32 +238,12 @@
 
                 <div class="photo-wrapper">
 
+                    <!-- FOTO DE PERFIL -->
 
-                    <c:choose>
-
-                        <c:when test="${not empty perfil.foto}">
-
-                            <img
-                                    class="profile-photo"
-
-                                    src="${pageContext.request.contextPath}/publico/imagen/${perfil.foto}"
-
-                                    alt="${perfil.nombre} ${perfil.apellidos}">
-
-                        </c:when>
-
-                        <c:otherwise>
-
-                            <img
-                                    class="profile-photo"
-
-                                    src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=800&q=85"
-
-                                    alt="Foto de perfil">
-
-                        </c:otherwise>
-
-                    </c:choose>
+                    <img
+                            class="profile-photo"
+                            src="${pageContext.request.contextPath}/imagenes/BEOM_TAEHA.jpg"
+                            alt="${perfil.nombre} ${perfil.apellidos}">
 
                 </div>
 
@@ -746,8 +727,13 @@
 
 
                         <div class="timeline-link">
+
                             Ver contenido
-                            <span>↗</span>
+
+                            <span>
+                                ↗
+                            </span>
+
                         </div>
 
 
