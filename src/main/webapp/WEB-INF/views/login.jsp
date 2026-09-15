@@ -1,5 +1,7 @@
+
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -10,29 +12,77 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
 
+    <meta name="description"
+          content="Acceso seguro al panel administrativo">
+
+    <meta name="robots"
+          content="noindex, nofollow">
+
     <title>Acceso | Panel Administrativo</title>
 
 
     <style>
 
-        /* =========================================
-           RESET
-        ========================================= */
+        /* =========================================================
+           VARIABLES
+        ========================================================= */
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --primary-light: #60a5fa;
+
+            --secondary: #38bdf8;
+
+            --background: #f1f7ff;
+            --background-light: #ffffff;
+
+            --card: #ffffff;
+
+            --text: #172033;
+            --text-dark: #0f172a;
+            --text-secondary: #64748b;
+            --text-light: #94a3b8;
+
+            --border: #e2e8f0;
+            --border-light: #edf2f7;
+
+            --input-background: #f8fafc;
+
+            --danger: #dc2626;
+            --danger-background: #fef2f2;
+
+            --success: #16a34a;
+            --success-background: #f0fdf4;
+
         }
 
 
-        /* =========================================
+        /* =========================================================
+           RESET
+        ========================================================= */
+
+        * {
+
+            margin: 0;
+
+            padding: 0;
+
+            box-sizing: border-box;
+
+        }
+
+
+        /* =========================================================
            BODY
-        ========================================= */
+        ========================================================= */
 
         body {
 
             min-height: 100vh;
+
+            padding: 25px;
 
             display: flex;
 
@@ -40,48 +90,76 @@
 
             justify-content: center;
 
-            padding: 20px;
-
             font-family:
                     "Segoe UI",
                     Arial,
                     Helvetica,
                     sans-serif;
 
+            color: var(--text);
+
             background:
+
                     radial-gradient(
-                            circle at 15% 20%,
-                            rgba(59,130,246,0.25),
-                            transparent 30%
+                            circle at 5% 10%,
+                            rgba(96,165,250,0.20),
+                            transparent 25%
                     ),
+
                     radial-gradient(
-                            circle at 85% 80%,
-                            rgba(99,102,241,0.25),
-                            transparent 30%
+                            circle at 95% 90%,
+                            rgba(56,189,248,0.18),
+                            transparent 28%
                     ),
+
                     linear-gradient(
                             135deg,
-                            #020617,
-                            #0f172a,
-                            #111827
+                            #eef6ff,
+                            #f8fbff
                     );
 
-            overflow: hidden;
+            overflow-x: hidden;
 
         }
 
 
-        /* =========================================
+        /* =========================================================
            FONDO DECORATIVO
-        ========================================= */
+        ========================================================= */
+
+        .background-grid {
+
+            position: fixed;
+
+            inset: 0;
+
+            pointer-events: none;
+
+            opacity: 0.45;
+
+            background-image:
+
+                    linear-gradient(
+                            rgba(37,99,235,0.035) 1px,
+                            transparent 1px
+                    ),
+
+                    linear-gradient(
+                            90deg,
+                            rgba(37,99,235,0.035) 1px,
+                            transparent 1px
+                    );
+
+            background-size: 40px 40px;
+
+        }
+
 
         .background-circle {
 
             position: fixed;
 
             border-radius: 50%;
-
-            filter: blur(2px);
 
             pointer-events: none;
 
@@ -90,53 +168,83 @@
 
         .circle-one {
 
-            width: 280px;
+            width: 420px;
 
-            height: 280px;
+            height: 420px;
 
-            top: -100px;
+            top: -250px;
 
-            left: -80px;
+            left: -200px;
 
-            border: 1px solid rgba(96,165,250,0.15);
+            border:
+                    1px solid
+                    rgba(37,99,235,0.10);
 
             background:
-                    rgba(59,130,246,0.04);
+                    rgba(96,165,250,0.04);
 
         }
 
 
         .circle-two {
 
-            width: 350px;
+            width: 380px;
 
-            height: 350px;
+            height: 380px;
 
-            right: -130px;
+            right: -200px;
 
-            bottom: -130px;
+            bottom: -210px;
 
-            border: 1px solid rgba(129,140,248,0.15);
+            border:
+                    1px solid
+                    rgba(56,189,248,0.12);
 
             background:
-                    rgba(99,102,241,0.04);
+                    rgba(56,189,248,0.05);
 
         }
 
 
-        /* =========================================
-           CONTENEDOR
-        ========================================= */
+        /* =========================================================
+           CONTENEDOR PRINCIPAL
+        ========================================================= */
 
-        .login-wrapper {
+        .login-container {
 
             position: relative;
 
             width: 100%;
 
-            max-width: 430px;
+            max-width: 980px;
 
-            animation: containerAppear 0.6s ease;
+            min-height: 590px;
+
+            display: grid;
+
+            grid-template-columns: 0.9fr 1.1fr;
+
+            overflow: hidden;
+
+            background:
+                    rgba(255,255,255,0.94);
+
+            border:
+                    1px solid
+                    rgba(148,163,184,0.20);
+
+            border-radius: 28px;
+
+            box-shadow:
+
+                    0 30px 80px
+                    rgba(30,64,175,0.12),
+
+                    0 8px 25px
+                    rgba(15,23,42,0.05);
+
+            animation:
+                    containerAppear 0.6s ease;
 
         }
 
@@ -166,46 +274,111 @@
         }
 
 
-        /* =========================================
-           TARJETA
-        ========================================= */
+        /* =========================================================
+           PANEL IZQUIERDO
+        ========================================================= */
 
-        .login-card {
+        .brand-panel {
 
             position: relative;
 
-            padding: 42px;
+            padding: 50px;
+
+            display: flex;
+
+            flex-direction: column;
+
+            justify-content: space-between;
+
+            overflow: hidden;
 
             background:
-                    rgba(15,23,42,0.88);
 
-            border:
-                    1px solid rgba(255,255,255,0.08);
+                    linear-gradient(
+                            145deg,
+                            #eff8ff,
+                            #e0f2fe
+                    );
 
-            border-radius: 24px;
-
-            box-shadow:
-                    0 30px 80px rgba(0,0,0,0.45),
-                    inset 0 1px 0 rgba(255,255,255,0.04);
-
-            backdrop-filter: blur(18px);
-
-            -webkit-backdrop-filter: blur(18px);
+            border-right:
+                    1px solid
+                    #dbeafe;
 
         }
 
 
-        /* =========================================
+        .brand-panel::before {
+
+            content: "";
+
+            position: absolute;
+
+            width: 320px;
+
+            height: 320px;
+
+            right: -170px;
+
+            top: -130px;
+
+            border-radius: 50%;
+
+            background:
+                    rgba(96,165,250,0.10);
+
+            border:
+                    1px solid
+                    rgba(37,99,235,0.08);
+
+        }
+
+
+        .brand-panel::after {
+
+            content: "";
+
+            position: absolute;
+
+            width: 220px;
+
+            height: 220px;
+
+            left: -130px;
+
+            bottom: -130px;
+
+            border-radius: 50%;
+
+            background:
+                    rgba(56,189,248,0.08);
+
+            border:
+                    1px solid
+                    rgba(56,189,248,0.10);
+
+        }
+
+
+        .brand-content {
+
+            position: relative;
+
+            z-index: 2;
+
+        }
+
+
+        /* =========================================================
            LOGO
-        ========================================= */
+        ========================================================= */
 
-        .logo {
+        .brand-logo {
 
-            width: 65px;
+            width: 62px;
 
-            height: 65px;
+            height: 62px;
 
-            margin: 0 auto 20px;
+            margin-bottom: 30px;
 
             display: flex;
 
@@ -216,83 +389,230 @@
             border-radius: 18px;
 
             background:
+
                     linear-gradient(
                             135deg,
-                            #3b82f6,
-                            #6366f1
+                            #2563eb,
+                            #38bdf8
                     );
 
             color: white;
 
-            font-size: 28px;
+            font-size: 24px;
+
+            font-weight: 900;
+
+            box-shadow:
+
+                    0 14px 30px
+                    rgba(37,99,235,0.20);
+
+        }
+
+
+        /* =========================================================
+           TITULO IZQUIERDO
+        ========================================================= */
+
+        .brand-title {
+
+            max-width: 330px;
+
+            color:
+                    var(--text-dark);
+
+            font-size: 39px;
+
+            line-height: 1.08;
+
+            letter-spacing: -1.5px;
 
             font-weight: 800;
 
-            box-shadow:
-                    0 12px 30px rgba(59,130,246,0.30);
+        }
 
-            animation: logoFloat 3s ease-in-out infinite;
+
+        .brand-title span {
+
+            color:
+                    var(--primary);
 
         }
 
 
-        @keyframes logoFloat {
+        .brand-description {
 
-            0%,
-            100% {
+            max-width: 340px;
 
-                transform: translateY(0);
+            margin-top: 20px;
 
-            }
-
-            50% {
-
-                transform: translateY(-4px);
-
-            }
-
-        }
-
-
-        /* =========================================
-           TITULO
-        ========================================= */
-
-        .login-title {
-
-            text-align: center;
-
-            color: #f8fafc;
-
-            font-size: 27px;
-
-            font-weight: 750;
-
-            letter-spacing: -0.5px;
-
-        }
-
-
-        .login-subtitle {
-
-            margin-top: 8px;
-
-            margin-bottom: 32px;
-
-            text-align: center;
-
-            color: #94a3b8;
+            color:
+                    var(--text-secondary);
 
             font-size: 14px;
 
-            line-height: 1.5;
+            line-height: 1.8;
 
         }
 
 
-        /* =========================================
-           ALERTAS
-        ========================================= */
+        /* =========================================================
+           CARACTERÍSTICAS
+        ========================================================= */
+
+        .security-list {
+
+            position: relative;
+
+            z-index: 2;
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 13px;
+
+        }
+
+
+        .security-item {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 11px;
+
+            color:
+                    #475569;
+
+            font-size: 12px;
+
+            font-weight: 500;
+
+        }
+
+
+        .security-icon {
+
+            width: 27px;
+
+            height: 27px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border-radius: 8px;
+
+            color:
+                    var(--primary);
+
+            background:
+                    rgba(37,99,235,0.08);
+
+            border:
+                    1px solid
+                    rgba(37,99,235,0.10);
+
+            font-weight: bold;
+
+        }
+
+
+        /* =========================================================
+           PANEL LOGIN
+        ========================================================= */
+
+        .login-panel {
+
+            padding: 55px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            background:
+                    #ffffff;
+
+        }
+
+
+        .login-content {
+
+            width: 100%;
+
+            max-width: 390px;
+
+        }
+
+
+        /* =========================================================
+           CABECERA LOGIN
+        ========================================================= */
+
+        .login-heading {
+
+            margin-bottom: 30px;
+
+        }
+
+
+        .login-heading small {
+
+            display: inline-block;
+
+            margin-bottom: 10px;
+
+            color:
+                    var(--primary);
+
+            font-size: 11px;
+
+            font-weight: 800;
+
+            letter-spacing: 1.5px;
+
+            text-transform: uppercase;
+
+        }
+
+
+        .login-heading h1 {
+
+            color:
+                    var(--text-dark);
+
+            font-size: 30px;
+
+            font-weight: 800;
+
+            letter-spacing: -0.8px;
+
+        }
+
+
+        .login-heading p {
+
+            margin-top: 8px;
+
+            color:
+                    var(--text-secondary);
+
+            font-size: 13px;
+
+            line-height: 1.6;
+
+        }
+
+
+        /* =========================================================
+           NOTIFICACIONES
+        ========================================================= */
 
         .notification {
 
@@ -304,14 +624,14 @@
 
             margin-bottom: 20px;
 
-            padding: 12px 14px;
+            padding: 13px 14px;
 
-            border-radius: 11px;
+            border-radius: 12px;
 
-            font-size: 13px;
+            font-size: 12px;
 
             animation:
-                    notificationIn 0.35s ease;
+                    notificationIn 0.3s ease;
 
         }
 
@@ -322,7 +642,8 @@
 
                 opacity: 0;
 
-                transform: translateY(-8px);
+                transform:
+                        translateY(-7px);
 
             }
 
@@ -330,7 +651,8 @@
 
                 opacity: 1;
 
-                transform: translateY(0);
+                transform:
+                        translateY(0);
 
             }
 
@@ -340,7 +662,9 @@
         .notification.hide {
 
             animation:
-                    notificationOut 0.35s ease forwards;
+                    notificationOut
+                    0.3s ease
+                    forwards;
 
         }
 
@@ -351,7 +675,8 @@
 
                 opacity: 1;
 
-                transform: translateY(0);
+                transform:
+                        translateY(0);
 
             }
 
@@ -359,7 +684,8 @@
 
                 opacity: 0;
 
-                transform: translateY(-8px);
+                transform:
+                        translateY(-7px);
 
             }
 
@@ -368,9 +694,9 @@
 
         .notification-icon {
 
-            width: 27px;
+            width: 28px;
 
-            height: 27px;
+            height: 28px;
 
             flex-shrink: 0;
 
@@ -382,20 +708,22 @@
 
             border-radius: 8px;
 
-            font-weight: bold;
+            font-weight: 800;
 
         }
 
 
         .notification.error {
 
-            color: #fecaca;
+            color:
+                    #991b1b;
 
             background:
-                    rgba(239,68,68,0.10);
+                    var(--danger-background);
 
             border:
-                    1px solid rgba(239,68,68,0.18);
+                    1px solid
+                    #fecaca;
 
         }
 
@@ -403,23 +731,26 @@
         .notification.error
         .notification-icon {
 
-            background:
-                    rgba(239,68,68,0.18);
+            color:
+                    var(--danger);
 
-            color: #f87171;
+            background:
+                    #fee2e2;
 
         }
 
 
         .notification.success {
 
-            color: #bbf7d0;
+            color:
+                    #166534;
 
             background:
-                    rgba(34,197,94,0.10);
+                    var(--success-background);
 
             border:
-                    1px solid rgba(34,197,94,0.18);
+                    1px solid
+                    #bbf7d0;
 
         }
 
@@ -427,21 +758,22 @@
         .notification.success
         .notification-icon {
 
-            background:
-                    rgba(34,197,94,0.18);
+            color:
+                    var(--success);
 
-            color: #4ade80;
+            background:
+                    #dcfce7;
 
         }
 
 
-        /* =========================================
+        /* =========================================================
            FORMULARIO
-        ========================================= */
+        ========================================================= */
 
         .form-group {
 
-            margin-bottom: 20px;
+            margin-bottom: 19px;
 
         }
 
@@ -452,18 +784,19 @@
 
             margin-bottom: 8px;
 
-            color: #e2e8f0;
+            color:
+                    #334155;
 
-            font-size: 13px;
+            font-size: 12px;
 
-            font-weight: 600;
+            font-weight: 700;
 
         }
 
 
-        /* =========================================
+        /* =========================================================
            INPUT
-        ========================================= */
+        ========================================================= */
 
         .input-wrapper {
 
@@ -480,15 +813,18 @@
 
             top: 50%;
 
-            transform: translateY(-50%);
+            transform:
+                    translateY(-50%);
 
-            color: #64748b;
+            color:
+                    #94a3b8;
 
-            font-size: 17px;
+            font-size: 15px;
 
             pointer-events: none;
 
-            transition: color 0.2s ease;
+            transition:
+                    color 0.2s ease;
 
         }
 
@@ -497,56 +833,60 @@
 
             width: 100%;
 
-            height: 50px;
+            height: 52px;
 
             padding:
-                    0 15px 0 45px;
+                    0 48px 0 43px;
 
             border:
-                    1px solid #334155;
+                    1px solid
+                    #dbe3ec;
 
-            border-radius: 11px;
+            border-radius: 12px;
 
             outline: none;
 
             background:
-                    rgba(15,23,42,0.75);
+                    var(--input-background);
 
-            color: #f8fafc;
+            color:
+                    var(--text-dark);
 
-            font-size: 14px;
+            font-size: 13px;
 
             transition:
+
                     border-color 0.2s ease,
+
                     box-shadow 0.2s ease,
+
                     background 0.2s ease;
-
-        }
-
-
-        input::placeholder {
-
-            color: #64748b;
 
         }
 
 
         input:hover {
 
-            border-color: #475569;
+            border-color:
+                    #bfdbfe;
+
+            background:
+                    #ffffff;
 
         }
 
 
         input:focus {
 
-            border-color: #3b82f6;
+            border-color:
+                    var(--primary);
 
             background:
-                    rgba(15,23,42,0.95);
+                    #ffffff;
 
             box-shadow:
-                    0 0 0 3px rgba(59,130,246,0.12);
+                    0 0 0 3px
+                    rgba(37,99,235,0.10);
 
         }
 
@@ -554,35 +894,38 @@
         .input-wrapper:focus-within
         .input-icon {
 
-            color: #60a5fa;
+            color:
+                    var(--primary);
 
         }
 
 
-        /* =========================================
-           OJITO PASSWORD
-        ========================================= */
+        input::placeholder {
 
-        .password-input {
-
-            padding-right: 48px;
+            color:
+                    #94a3b8;
 
         }
 
+
+        /* =========================================================
+           BOTÓN MOSTRAR CONTRASEÑA
+        ========================================================= */
 
         .toggle-password {
 
             position: absolute;
 
-            right: 8px;
+            right: 7px;
 
             top: 50%;
 
-            transform: translateY(-50%);
+            transform:
+                    translateY(-50%);
 
-            width: 36px;
+            width: 38px;
 
-            height: 36px;
+            height: 38px;
 
             display: flex;
 
@@ -592,18 +935,22 @@
 
             border: none;
 
-            border-radius: 8px;
+            border-radius: 9px;
 
-            background: transparent;
+            background:
+                    transparent;
 
-            color: #64748b;
+            color:
+                    #94a3b8;
 
             cursor: pointer;
 
-            font-size: 17px;
+            font-size: 15px;
 
             transition:
+
                     color 0.2s ease,
+
                     background 0.2s ease;
 
         }
@@ -611,83 +958,105 @@
 
         .toggle-password:hover {
 
-            color: #60a5fa;
+            color:
+                    var(--primary);
 
             background:
-                    rgba(59,130,246,0.10);
+                    #eff6ff;
 
         }
 
 
-        /* =========================================
+        /* =========================================================
            BOTÓN LOGIN
-        ========================================= */
+        ========================================================= */
 
         .login-button {
 
-            position: relative;
-
             width: 100%;
 
-            height: 52px;
+            height: 53px;
 
-            margin-top: 8px;
+            margin-top: 7px;
 
             border: none;
 
-            border-radius: 11px;
+            border-radius: 12px;
 
             background:
+
                     linear-gradient(
                             135deg,
                             #2563eb,
-                            #4f46e5
+                            #0ea5e9
                     );
 
-            color: white;
+            color:
+                    #ffffff;
 
-            font-size: 14px;
+            font-size: 13px;
 
-            font-weight: 700;
+            font-weight: 800;
 
             letter-spacing: 0.2px;
 
             cursor: pointer;
 
-            overflow: hidden;
-
             box-shadow:
-                    0 10px 25px rgba(37,99,235,0.22);
+
+                    0 12px 25px
+                    rgba(37,99,235,0.20);
 
             transition:
+
                     transform 0.2s ease,
-                    box-shadow 0.2s ease;
+
+                    box-shadow 0.2s ease,
+
+                    filter 0.2s ease;
 
         }
 
 
         .login-button:hover {
 
-            transform: translateY(-2px);
+            transform:
+                    translateY(-2px);
+
+            filter:
+                    brightness(1.04);
 
             box-shadow:
-                    0 14px 30px rgba(37,99,235,0.30);
+
+                    0 17px 32px
+                    rgba(37,99,235,0.25);
 
         }
 
 
         .login-button:active {
 
-            transform: translateY(0);
+            transform:
+                    translateY(0);
+
+        }
+
+
+        .login-button:disabled {
+
+            cursor:
+                    not-allowed;
+
+            opacity:
+                    0.65;
+
+            transform:
+                    none;
 
         }
 
 
         .button-content {
-
-            position: relative;
-
-            z-index: 2;
 
             display: flex;
 
@@ -700,52 +1069,120 @@
         }
 
 
-        /* =========================================
-           FOOTER
-        ========================================= */
+        .button-arrow {
 
-        .login-footer {
+            font-size: 17px;
 
-            margin-top: 28px;
-
-            padding-top: 20px;
-
-            border-top:
-                    1px solid rgba(255,255,255,0.06);
-
-            text-align: center;
-
-            color: #475569;
-
-            font-size: 11px;
+            transition:
+                    transform 0.2s ease;
 
         }
 
 
-        .login-footer strong {
+        .login-button:hover
+        .button-arrow {
 
-            color: #64748b;
+            transform:
+                    translateX(4px);
 
         }
 
 
-        /* =========================================
-           SEGURIDAD
-        ========================================= */
+        /* =========================================================
+           LOADING
+        ========================================================= */
 
-        .security-info {
+        .loading {
 
-            display: flex;
+            display: inline-flex;
 
             align-items: center;
 
             justify-content: center;
 
-            gap: 7px;
+            gap: 8px;
 
-            margin-top: 10px;
+        }
 
-            color: #475569;
+
+        .spinner {
+
+            width: 14px;
+
+            height: 14px;
+
+            border:
+                    2px solid
+                    rgba(255,255,255,0.35);
+
+            border-top-color:
+                    white;
+
+            border-radius: 50%;
+
+            animation:
+                    spin 0.7s linear infinite;
+
+        }
+
+
+        @keyframes spin {
+
+            to {
+
+                transform:
+                        rotate(360deg);
+
+            }
+
+        }
+
+
+        /* =========================================================
+           FOOTER
+        ========================================================= */
+
+        .login-footer {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 10px;
+
+            margin-top: 25px;
+
+            padding-top: 20px;
+
+            border-top:
+                    1px solid
+                    var(--border-light);
+
+        }
+
+
+        .copyright {
+
+            color:
+                    #94a3b8;
+
+            font-size: 10px;
+
+        }
+
+
+        .protected {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 6px;
+
+            color:
+                    #94a3b8;
 
             font-size: 10px;
 
@@ -760,19 +1197,22 @@
 
             border-radius: 50%;
 
-            background: #22c55e;
+            background:
+                    var(--success);
 
             box-shadow:
-                    0 0 0 3px rgba(34,197,94,0.08);
+
+                    0 0 0 3px
+                    rgba(22,163,74,0.08);
 
         }
 
 
-        /* =========================================
+        /* =========================================================
            RESPONSIVE
-        ========================================= */
+        ========================================================= */
 
-        @media (max-width: 500px) {
+        @media (max-width: 800px) {
 
             body {
 
@@ -781,29 +1221,104 @@
             }
 
 
-            .login-card {
+            .login-container {
 
-                padding: 32px 25px;
+                max-width: 500px;
 
-                border-radius: 20px;
+                min-height: auto;
 
-            }
-
-
-            .login-title {
-
-                font-size: 24px;
+                grid-template-columns: 1fr;
 
             }
 
 
-            .logo {
+            .brand-panel {
 
-                width: 58px;
+                padding: 35px;
 
-                height: 58px;
+                min-height: 280px;
 
-                font-size: 24px;
+                border-right: none;
+
+                border-bottom:
+                        1px solid
+                        #dbeafe;
+
+            }
+
+
+            .brand-title {
+
+                font-size: 31px;
+
+            }
+
+
+            .security-list {
+
+                margin-top: 25px;
+
+            }
+
+
+            .login-panel {
+
+                padding: 35px;
+
+            }
+
+        }
+
+
+        @media (max-width: 480px) {
+
+            body {
+
+                padding: 10px;
+
+            }
+
+
+            .login-container {
+
+                border-radius: 22px;
+
+            }
+
+
+            .brand-panel {
+
+                padding: 28px;
+
+            }
+
+
+            .login-panel {
+
+                padding: 28px 22px;
+
+            }
+
+
+            .brand-title {
+
+                font-size: 28px;
+
+            }
+
+
+            .login-heading h1 {
+
+                font-size: 26px;
+
+            }
+
+
+            .login-footer {
+
+                flex-direction: column;
+
+                align-items: flex-start;
 
             }
 
@@ -817,232 +1332,358 @@
 <body>
 
 
-<!-- =========================================
-     DECORACIÓN
-========================================= -->
+<!-- =========================================================
+     FONDO
+========================================================= -->
+
+<div class="background-grid"></div>
 
 <div class="background-circle circle-one"></div>
 
 <div class="background-circle circle-two"></div>
 
 
-<!-- =========================================
-     LOGIN
-========================================= -->
+<!-- =========================================================
+     CONTENEDOR PRINCIPAL
+========================================================= -->
 
-<div class="login-wrapper">
-
-    <div class="login-card">
+<main class="login-container">
 
 
-        <!-- LOGO -->
+    <!-- =====================================================
+         PANEL IZQUIERDO
+    ====================================================== -->
 
-        <div class="logo">
-            P
-        </div>
-
-
-        <!-- TITULO -->
-
-        <h1 class="login-title">
-            Bienvenido
-        </h1>
+    <section class="brand-panel">
 
 
-        <p class="login-subtitle">
-            Ingresa al panel administrativo<br>
-            de tu portafolio
-        </p>
+        <div class="brand-content">
 
 
-        <!-- =====================================
-             ERROR LOGIN
-        ====================================== -->
-
-        <c:if test="${not empty param.error}">
-        <div
-                class="notification error"
-                id="errorNotification">
-
-            <div class="notification-icon">
-                !
+            <div class="brand-logo">
+                P
             </div>
 
-            <span>
-                Usuario o contraseña incorrectos.
-            </span>
+
+            <h2 class="brand-title">
+
+                Tu espacio
+                <span>administrativo.</span>
+
+            </h2>
+
+
+            <p class="brand-description">
+
+                Gestiona el contenido de tu portafolio
+                desde un panel centralizado, moderno
+                y protegido.
+
+            </p>
 
         </div>
-        </c:if>
 
 
-        <!-- =====================================
-             LOGOUT
-        ====================================== -->
+        <!-- =================================================
+             SEGURIDAD
+        ================================================== -->
 
-        <c:if test="${not empty param.logout}">
-        <div
-                class="notification success"
-                id="logoutNotification">
+        <div class="security-list">
 
-            <div class="notification-icon">
-                ✓
+
+            <div class="security-item">
+
+                <span class="security-icon">
+                    ✓
+                </span>
+
+                Acceso autenticado
+
             </div>
 
-            <span>
-                Has cerrado sesión correctamente.
-            </span>
+
+            <div class="security-item">
+
+                <span class="security-icon">
+                    ✓
+                </span>
+
+                Sesión protegida
+
+            </div>
+
+
+            <div class="security-item">
+
+                <span class="security-icon">
+                    ✓
+                </span>
+
+                Panel exclusivo para administradores
+
+            </div>
+
 
         </div>
-        </c:if>
+
+    </section>
 
 
-        <!-- =====================================
-             FORMULARIO
-        ====================================== -->
+    <!-- =====================================================
+         LOGIN
+    ====================================================== -->
 
-        <form method="post"
-              action="${pageContext.request.contextPath}/login">
-
-
-            <!-- USUARIO -->
-
-            <div class="form-group">
-
-                <label
-                        class="form-label"
-                        for="username">
-
-                    Usuario
-
-                </label>
+    <section class="login-panel">
 
 
-                <div class="input-wrapper">
+        <div class="login-content">
 
-                    <span class="input-icon">
-                        ◉
+
+            <!-- =================================================
+                 CABECERA
+            ================================================== -->
+
+            <div class="login-heading">
+
+                <small>
+                    PANEL ADMIN
+                </small>
+
+                <h1>
+                    Iniciar sesión
+                </h1>
+
+                <p>
+                    Ingresa tus credenciales para continuar.
+                </p>
+
+            </div>
+
+
+            <!-- =================================================
+                 ERROR
+            ================================================== -->
+
+            <c:if test="${not empty param.error}">
+
+                <div
+                        class="notification error"
+                        id="errorNotification">
+
+                    <div class="notification-icon">
+                        !
+                    </div>
+
+                    <span>
+                        Usuario o contraseña incorrectos.
                     </span>
-
-                    <input
-                            type="text"
-                            id="username"
-                            name="username"
-                            placeholder="Ingrese su usuario"
-                            autocomplete="username"
-                            required
-                    >
 
                 </div>
 
-            </div>
+            </c:if>
 
 
-            <!-- CONTRASEÑA -->
+            <!-- =================================================
+                 LOGOUT
+            ================================================== -->
 
-            <div class="form-group">
+            <c:if test="${not empty param.logout}">
 
-                <label
-                        class="form-label"
-                        for="password">
+                <div
+                        class="notification success"
+                        id="logoutNotification">
 
-                    Contraseña
+                    <div class="notification-icon">
+                        ✓
+                    </div>
 
-                </label>
-
-
-                <div class="input-wrapper">
-
-                    <span class="input-icon">
-                        ◆
+                    <span>
+                        Has cerrado sesión correctamente.
                     </span>
-
-
-                    <input
-                            class="password-input"
-                            type="password"
-                            id="password"
-                            name="password"
-                            placeholder="Ingrese su contraseña"
-                            autocomplete="current-password"
-                            required
-                    >
-
-
-                    <!-- OJITO -->
-
-                    <button
-                            type="button"
-                            class="toggle-password"
-                            id="togglePassword"
-                            aria-label="Mostrar contraseña">
-
-                        👁
-
-                    </button>
 
                 </div>
 
-            </div>
+            </c:if>
 
 
-            <!-- BOTÓN -->
+            <!-- =================================================
+                 FORMULARIO
+            ================================================== -->
 
-            <button
-                    type="submit"
-                    class="login-button">
+            <form
+                    method="post"
+                    action="${pageContext.request.contextPath}/login"
+                    id="loginForm"
+                    autocomplete="on">
 
-                <span class="button-content">
 
-                    <span>
-                        Iniciar sesión
+                <!-- USUARIO -->
+
+                <div class="form-group">
+
+                    <label
+                            class="form-label"
+                            for="username">
+
+                        Usuario
+
+                    </label>
+
+
+                    <div class="input-wrapper">
+
+
+                        <span
+                                class="input-icon"
+                                aria-hidden="true">
+
+                            ◉
+
+                        </span>
+
+
+                        <input
+                                type="text"
+                                id="username"
+                                name="username"
+                                placeholder="Ingresa tu usuario"
+                                autocomplete="username"
+                                maxlength="50"
+                                required
+                                spellcheck="false"
+                                autocapitalize="none"
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <!-- CONTRASEÑA -->
+
+                <div class="form-group">
+
+                    <label
+                            class="form-label"
+                            for="password">
+
+                        Contraseña
+
+                    </label>
+
+
+                    <div class="input-wrapper">
+
+
+                        <span
+                                class="input-icon"
+                                aria-hidden="true">
+
+                            ◆
+
+                        </span>
+
+
+                        <input
+                                class="password-input"
+                                type="password"
+                                id="password"
+                                name="password"
+                                placeholder="Ingresa tu contraseña"
+                                autocomplete="current-password"
+                                maxlength="128"
+                                required
+                        >
+
+
+                        <!-- MOSTRAR CONTRASEÑA -->
+
+                        <button
+                                type="button"
+                                class="toggle-password"
+                                id="togglePassword"
+                                aria-label="Mostrar contraseña"
+                                aria-pressed="false">
+
+                            👁
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     BOTÓN
+                ================================================== -->
+
+                <button
+                        type="submit"
+                        class="login-button"
+                        id="loginButton">
+
+                    <span
+                            class="button-content"
+                            id="buttonContent">
+
+                        <span>
+                            Acceder al panel
+                        </span>
+
+                        <span class="button-arrow">
+                            →
+                        </span>
+
                     </span>
 
-                    <span>
-                        →
-                    </span>
+                </button>
+
+
+            </form>
+
+
+            <!-- =================================================
+                 FOOTER
+            ================================================== -->
+
+            <div class="login-footer">
+
+
+                <span class="copyright">
+                    PORTAFOLIO ADMIN
+                </span>
+
+
+                <span class="protected">
+
+                    <span class="security-dot"></span>
+
+                    Acceso protegido
 
                 </span>
 
-            </button>
-
-        </form>
-
-
-        <!-- =====================================
-             FOOTER
-        ====================================== -->
-
-        <div class="login-footer">
-
-            <strong>
-                PORTAFOLIO ADMIN
-            </strong>
-
-            <div class="security-info">
-
-                <span class="security-dot"></span>
-
-                Acceso protegido
 
             </div>
 
+
         </div>
 
-    </div>
+    </section>
 
-</div>
+</main>
 
 
-<!-- =========================================
+<!-- =========================================================
      JAVASCRIPT
-========================================= -->
+========================================================= -->
 
 <script>
 
-    /* =========================================
-       MOSTRAR / OCULTAR CONTRASEÑA
-    ========================================= */
+
+    /* =========================================================
+       ELEMENTOS
+    ========================================================= */
 
     const passwordInput =
         document.getElementById("password");
@@ -1050,6 +1691,19 @@
     const togglePassword =
         document.getElementById("togglePassword");
 
+    const loginForm =
+        document.getElementById("loginForm");
+
+    const loginButton =
+        document.getElementById("loginButton");
+
+    const buttonContent =
+        document.getElementById("buttonContent");
+
+
+    /* =========================================================
+       MOSTRAR / OCULTAR CONTRASEÑA
+    ========================================================= */
 
     if (togglePassword && passwordInput) {
 
@@ -1057,7 +1711,12 @@
             "click",
             function () {
 
-                if (passwordInput.type === "password") {
+
+                const isPassword =
+                    passwordInput.type === "password";
+
+
+                if (isPassword) {
 
                     passwordInput.type = "text";
 
@@ -1068,7 +1727,14 @@
                         "Ocultar contraseña"
                     );
 
-                } else {
+                    togglePassword.setAttribute(
+                        "aria-pressed",
+                        "true"
+                    );
+
+                }
+
+                else {
 
                     passwordInput.type = "password";
 
@@ -1079,6 +1745,11 @@
                         "Mostrar contraseña"
                     );
 
+                    togglePassword.setAttribute(
+                        "aria-pressed",
+                        "false"
+                    );
+
                 }
 
             }
@@ -1087,34 +1758,98 @@
     }
 
 
-    /* =========================================
+    /* =========================================================
+       PREVENIR DOBLE ENVÍO
+    ========================================================= */
+
+    if (loginForm) {
+
+        loginForm.addEventListener(
+            "submit",
+            function () {
+
+
+                if (
+                    loginButton &&
+                    loginButton.disabled
+                ) {
+
+                    return;
+
+                }
+
+
+                if (loginButton) {
+
+                    loginButton.disabled = true;
+
+                }
+
+
+                if (buttonContent) {
+
+                    buttonContent.innerHTML =
+
+                        '<span class="loading">' +
+
+                        '<span class="spinner"></span>' +
+
+                        '<span>Verificando...</span>' +
+
+                        '</span>';
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* =========================================================
        NOTIFICACIONES
-       DESAPARECEN EN 1 SEGUNDO
-    ========================================= */
+       DESAPARECEN DESPUÉS DE 3.5 SEGUNDOS
+    ========================================================= */
 
     const notifications =
         document.querySelectorAll(".notification");
 
 
-    notifications.forEach(function(notification) {
-
-        setTimeout(function() {
-
-            notification.classList.add("hide");
-
-        }, 1000);
+    notifications.forEach(
+        function(notification) {
 
 
-        setTimeout(function() {
+            setTimeout(
+                function() {
 
-            notification.remove();
+                    notification.classList.add("hide");
 
-        }, 1400);
+                },
+                3500
+            );
 
-    });
+
+            setTimeout(
+                function() {
+
+                    if (notification) {
+
+                        notification.remove();
+
+                    }
+
+                },
+                3900
+            );
+
+        }
+    );
+
 
 </script>
 
 
 </body>
+
 </html>
+
