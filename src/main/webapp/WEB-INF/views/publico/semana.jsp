@@ -452,18 +452,10 @@
             <div class="week-big-number"><c:if test="${semana.numero < 10}">0</c:if>${semana.numero}</div>
 
 
-            <h1>${semana.titulo}
-
-                Semana 01
-
-            </h1>
+            <h1>${semana.titulo}</h1>
 
 
-            <p>${semana.descripcion}
-
-                Descripción de la semana.
-
-            </p>
+            <p>${semana.descripcion}</p>
 
 
         </div>
@@ -540,21 +532,13 @@
 
                     <!-- TÍTULO -->
 
-                    <h3>${trabajo.titulo}
-
-                        Trabajo
-
-                    </h3>
+                    <h3>${trabajo.titulo}</h3>
 
 
                     <!-- DESCRIPCIÓN -->
 
                     <c:if test="${not empty trabajo.descripcion}">
-                    <p>${trabajo.descripcion}
-
-                        Descripción del trabajo.
-
-                    </p>
+                    <p>${trabajo.descripcion}</p>
                     </c:if>
 
 

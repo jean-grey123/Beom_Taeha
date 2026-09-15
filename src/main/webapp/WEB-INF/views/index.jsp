@@ -860,23 +860,11 @@
         <c:forEach items="${semanas}" var="semana">
         <article class="week-card">
 
-            <span class="week-number">SEMANA ${semana.numero}
+            <span class="week-number">SEMANA ${semana.numero}</span>
 
-                SEMANA 01
+            <h3>${semana.titulo}</h3>
 
-            </span>
-
-            <h3>${semana.titulo}
-
-                Título de la semana
-
-            </h3>
-
-            <p>${semana.descripcion}
-
-                Descripción de la semana.
-
-            </p>
+            <p>${semana.descripcion}</p>
 
             <a href="#"
                class="week-link">
