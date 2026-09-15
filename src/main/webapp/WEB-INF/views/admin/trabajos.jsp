@@ -1,5 +1,8 @@
+
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -310,6 +313,7 @@
      ===================================================== -->
 
 <% request.setAttribute("activePage", "trabajos"); %>
+
 <%@ include file="../fragments/sidebar.jsp" %>
 
 
@@ -345,20 +349,18 @@
 
     <div class="acciones">
 
-        <!-- NUEVO TRABAJO -->
-
-        <a class="btn btn-nuevo"
-           href="${pageContext.request.contextPath}/admin/trabajos/nuevo/${semana.id}">
+        <a
+                class="btn btn-nuevo"
+                href="${pageContext.request.contextPath}/admin/trabajos/nuevo/${semana.id}">
 
             ➕ Nuevo trabajo
 
         </a>
 
 
-        <!-- VOLVER -->
-
-        <a class="btn btn-volver"
-           href="${pageContext.request.contextPath}/admin/semanas">
+        <a
+                class="btn btn-volver"
+                href="${pageContext.request.contextPath}/admin/semanas">
 
             ← Volver a semanas
 
@@ -372,24 +374,27 @@
          ===================================================== -->
 
     <c:if test="${empty trabajos}">
-    <div class="vacio">
 
-        <h2>
-            📂 No hay trabajos todavía
-        </h2>
+        <div class="vacio">
 
-        <p>
-            Esta semana todavía no tiene trabajos registrados.
-        </p>
+            <h2>
+                📂 No hay trabajos todavía
+            </h2>
 
-        <a class="btn btn-nuevo"
-           href="${pageContext.request.contextPath}/admin/trabajos/nuevo/${semana.id}">
+            <p>
+                Esta semana todavía no tiene trabajos registrados.
+            </p>
 
-            ➕ Agregar primer trabajo
+            <a
+                    class="btn btn-nuevo"
+                    href="${pageContext.request.contextPath}/admin/trabajos/nuevo/${semana.id}">
 
-        </a>
+                ➕ Agregar primer trabajo
 
-    </div>
+            </a>
+
+        </div>
+
     </c:if>
 
 
@@ -398,128 +403,158 @@
          ===================================================== -->
 
     <c:if test="${not empty trabajos}">
-    <div class="trabajos-container">
+
+        <div class="trabajos-container">
 
 
-        <!-- =================================================
-             TARJETA DE TRABAJO
-             ================================================= -->
+            <c:forEach items="${trabajos}" var="trabajo">
 
-        <c:forEach items="${trabajos}" var="trabajo">
-        <div class="trabajo-card">
-
-
-            <!-- =================================================
-                 IMAGEN DEL TRABAJO
-                 ================================================= -->
-
-            <c:if test="${not empty trabajo.imagen}"><div>
-
-                <img class="imagen-trabajo"
-                     src="${pageContext.request.contextPath}/trabajos/imagen/${trabajo.imagen}"
-                     alt="${trabajo.titulo}">
-
-            </div></c:if>
-
-
-            <!-- SIN IMAGEN -->
-
-            <c:if test="${empty trabajo.imagen}"><div class="sin-imagen">
-
-                🖼️ Sin imagen
-
-            </div></c:if>
-
-
-            <!-- =================================================
-                 INFORMACIÓN
-                 ================================================= -->
-
-            <div class="trabajo-body">
-
-
-                <!-- TÍTULO -->
-
-                <h2>${trabajo.titulo}</h2>
-
-
-                <!-- DESCRIPCIÓN -->
-
-                <c:if test="${not empty trabajo.descripcion}"><p class="descripcion">${trabajo.descripcion}</p></c:if>
-
-
-                <!-- =================================================
-                     RECURSOS
-                     ================================================= -->
-
-                <div class="recursos">
-
-
-                    <!-- ENLACE EXTERNO -->
-
-                    <c:if test="${not empty trabajo.enlace}"><a href="${trabajo.enlace}"
-                       target="_blank"
-                       rel="noopener noreferrer">
-
-                        🔗 Ver enlace
-
-                    </a></c:if>
+                <div class="trabajo-card">
 
 
                     <!-- =================================================
-                         ARCHIVO SUBIDO
+                         IMAGEN DEL TRABAJO
                          ================================================= -->
 
-                    <c:if test="${not empty trabajo.archivo}"><a href="${pageContext.request.contextPath}/trabajos/archivo/${trabajo.archivo}"
-                       target="_blank"
-                       rel="noopener noreferrer">
+                    <c:if test="${not empty trabajo.imagen}">
 
-                        📎 Ver archivo
+                        <div>
 
-                    </a></c:if>
+                            <c:choose>
 
+                                <c:when test="${fn:startsWith(trabajo.imagen, 'http')}">
+
+                                    <img
+                                            class="imagen-trabajo"
+                                            src="${trabajo.imagen}"
+                                            alt="${trabajo.titulo}">
+
+                                </c:when>
+
+                                <c:otherwise>
+
+                                    <img
+                                            class="imagen-trabajo"
+                                            src="${pageContext.request.contextPath}/trabajos/imagen/${trabajo.imagen}"
+                                            alt="${trabajo.titulo}">
+
+                                </c:otherwise>
+
+                            </c:choose>
+
+                        </div>
+
+                    </c:if>
+
+
+                    <!-- SIN IMAGEN -->
+
+                    <c:if test="${empty trabajo.imagen}">
+
+                        <div class="sin-imagen">
+
+                            🖼️ Sin imagen
+
+                        </div>
+
+                    </c:if>
+
+
+                    <!-- =================================================
+                         INFORMACIÓN
+                         ================================================= -->
+
+                    <div class="trabajo-body">
+
+
+                        <h2>${trabajo.titulo}</h2>
+
+
+                        <c:if test="${not empty trabajo.descripcion}">
+
+                            <p class="descripcion">
+                                    ${trabajo.descripcion}
+                            </p>
+
+                        </c:if>
+
+
+                        <!-- =================================================
+                             RECURSOS
+                             ================================================= -->
+
+                        <div class="recursos">
+
+
+                            <c:if test="${not empty trabajo.enlace}">
+
+                                <a
+                                        href="${trabajo.enlace}"
+                                        target="_blank"
+                                        rel="noopener noreferrer">
+
+                                    🔗 Ver enlace
+
+                                </a>
+
+                            </c:if>
+
+
+                            <c:if test="${not empty trabajo.archivo}">
+
+                                <a
+                                        href="${pageContext.request.contextPath}/trabajos/archivo/${trabajo.archivo}"
+                                        target="_blank"
+                                        rel="noopener noreferrer">
+
+                                    📎 Ver archivo
+
+                                </a>
+
+                            </c:if>
+
+
+                        </div>
+
+
+                        <!-- =================================================
+                             ACCIONES
+                             ================================================= -->
+
+                        <div class="acciones-card">
+
+
+                            <a
+                                    class="btn btn-editar"
+                                    href="${pageContext.request.contextPath}/admin/trabajos/editar/${trabajo.id}">
+
+                                ✏️ Editar
+
+                            </a>
+
+
+                            <a
+                                    class="btn btn-eliminar"
+                                    href="${pageContext.request.contextPath}/admin/trabajos/eliminar/${trabajo.id}"
+                                    onclick="return confirm('¿Seguro que deseas eliminar este trabajo?');">
+
+                                🗑️ Eliminar
+
+                            </a>
+
+
+                        </div>
+
+
+                    </div>
 
                 </div>
 
+            </c:forEach>
 
-                <!-- =================================================
-                     ACCIONES
-                     ================================================= -->
-
-                <div class="acciones-card">
-
-
-                    <!-- EDITAR -->
-
-                    <a class="btn btn-editar"
-                       href="${pageContext.request.contextPath}/admin/trabajos/editar/${trabajo.id}">
-
-                        ✏️ Editar
-
-                    </a>
-
-
-                    <!-- ELIMINAR -->
-
-                    <a class="btn btn-eliminar"
-                       href="${pageContext.request.contextPath}/admin/trabajos/eliminar/${trabajo.id}"
-                       onclick="return confirm('¿Seguro que deseas eliminar este trabajo?');">
-
-                        🗑️ Eliminar
-
-                    </a>
-
-
-                </div>
-
-
-            </div>
 
         </div>
-        </c:forEach>
 
-
-    </div>
     </c:if>
 
 
@@ -529,3 +564,4 @@
 </body>
 
 </html>
+

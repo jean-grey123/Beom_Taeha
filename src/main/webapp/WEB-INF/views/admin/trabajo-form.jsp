@@ -1,5 +1,8 @@
+
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -10,9 +13,7 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
 
-    <title>
-        Trabajo
-    </title>
+    <title>Trabajo</title>
 
     <style>
 
@@ -226,6 +227,7 @@
      ===================================================== -->
 
 <% request.setAttribute("activePage", "trabajos"); %>
+
 <%@ include file="../fragments/sidebar.jsp" %>
 
 
@@ -244,11 +246,13 @@
     <div class="header">
 
         <h1>
-            Nuevo trabajo
+            ${nuevo ? 'Nuevo trabajo' : 'Editar trabajo'}
         </h1>
 
         <p>
-            Agrega el trabajo realizado durante esta semana.
+            ${nuevo
+                    ? 'Agrega el trabajo realizado durante esta semana.'
+                    : 'Actualiza la información del trabajo.'}
         </p>
 
     </div>
@@ -262,8 +266,11 @@
     <div class="semana-info">
 
         <strong>
+
             📚 Semana
+
             <span>${semana.numero}</span>
+
         </strong>
 
         <br>
@@ -347,7 +354,8 @@
                     <textarea
                             id="descripcion"
                             name="descripcion"
-                            placeholder="Describe el trabajo realizado..."></textarea>
+                            placeholder="Describe el trabajo realizado..."
+                            required>${trabajo.descripcion}</textarea>
 
                     <small>
                         Explica brevemente qué realizaste,
@@ -396,6 +404,9 @@
 
                 <div class="archivo-box">
 
+
+                    <!-- SELECCIONAR IMAGEN -->
+
                     <div class="campo">
 
                         <label for="imagenArchivo">
@@ -419,19 +430,41 @@
 
                     <!-- IMAGEN ACTUAL -->
 
-                    <c:if test="${not empty trabajo.imagen}"><div class="imagen-actual">
+                    <c:if test="${not empty trabajo.imagen}">
 
-                        <p>
-                            <strong>
-                                Imagen actual:
-                            </strong>
-                        </p>
+                        <div class="imagen-actual">
 
-                        <img
-                                src="${pageContext.request.contextPath}/admin/trabajos/imagen/${trabajo.imagen}"
-                                alt="Imagen actual del trabajo">
+                            <p>
+                                <strong>
+                                    Imagen actual:
+                                </strong>
+                            </p>
 
-                    </div></c:if>
+
+                            <c:choose>
+
+                                <c:when test="${fn:startsWith(trabajo.imagen, 'http')}">
+
+                                    <img
+                                            src="${trabajo.imagen}"
+                                            alt="Imagen actual del trabajo">
+
+                                </c:when>
+
+                                <c:otherwise>
+
+                                    <img
+                                            src="${pageContext.request.contextPath}/admin/trabajos/imagen/${trabajo.imagen}"
+                                            alt="Imagen actual del trabajo">
+
+                                </c:otherwise>
+
+                            </c:choose>
+
+                        </div>
+
+                    </c:if>
+
 
                 </div>
 
@@ -449,6 +482,9 @@
 
 
                 <div class="archivo-box">
+
+
+                    <!-- SELECCIONAR ARCHIVO -->
 
                     <div class="campo">
 
@@ -473,19 +509,24 @@
 
                     <!-- ARCHIVO ACTUAL -->
 
-                    <c:if test="${not empty trabajo.archivo}"><div class="archivo-actual">
+                    <c:if test="${not empty trabajo.archivo}">
 
-                        📎 <strong>Archivo actual:</strong>
+                        <div class="archivo-actual">
 
-                        <a
-                                href="${pageContext.request.contextPath}/admin/trabajos/archivo/${trabajo.archivo}"
-                                target="_blank">
+                            📎 <strong>Archivo actual:</strong>
 
-                            Ver archivo
+                            <a
+                                    href="${pageContext.request.contextPath}/admin/trabajos/archivo/${trabajo.archivo}"
+                                    target="_blank">
 
-                        </a>
+                                Ver archivo
 
-                    </div></c:if>
+                            </a>
+
+                        </div>
+
+                    </c:if>
+
 
                 </div>
 
@@ -507,7 +548,10 @@
                         class="btn btn-guardar">
 
                     💾
-                    <span>${nuevo ? 'Guardar trabajo' : 'Actualizar trabajo'}</span>
+
+                    <span>
+                        ${nuevo ? 'Guardar trabajo' : 'Actualizar trabajo'}
+                    </span>
 
                 </button>
 
@@ -523,6 +567,7 @@
 
                 </a>
 
+
             </div>
 
 
@@ -536,3 +581,4 @@
 </body>
 
 </html>
+

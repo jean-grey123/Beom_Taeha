@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <!DOCTYPE html>
 <html lang="es">
 
@@ -499,16 +500,33 @@
                      ================================================= -->
 
                 <c:if test="${not empty trabajo.imagen}">
-                <div>
+                    <div>
 
-                    <img
-                            class="work-image"
+                        <c:choose>
 
-                            src="${pageContext.request.contextPath}/trabajos/imagen/${trabajo.imagen}"
+                            <%-- Imagen nueva almacenada en Cloudinary --%>
+                            <c:when test="${fn:startsWith(trabajo.imagen, 'http')}">
 
-                            alt="${trabajo.titulo}">
+                                <img
+                                        class="work-image"
+                                        src="${trabajo.imagen}"
+                                        alt="${trabajo.titulo}">
 
-                </div>
+                            </c:when>
+
+                            <%-- Imagen antigua almacenada localmente --%>
+                            <c:otherwise>
+
+                                <img
+                                        class="work-image"
+                                        src="${pageContext.request.contextPath}/trabajos/imagen/${trabajo.imagen}"
+                                        alt="${trabajo.titulo}">
+
+                            </c:otherwise>
+
+                        </c:choose>
+
+                    </div>
                 </c:if>
 
 

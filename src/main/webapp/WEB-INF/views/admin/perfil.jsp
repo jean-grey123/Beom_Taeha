@@ -1,5 +1,8 @@
+
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -199,6 +202,7 @@
      ===================================================== -->
 
 <% request.setAttribute("activePage", "perfil"); %>
+
 <%@ include file="../fragments/sidebar.jsp" %>
 
 
@@ -373,7 +377,7 @@
                             id="descripcion"
                             name="descripcion"
                             placeholder="Escribe una breve presentación sobre ti..."
-                            required></textarea>
+                            required>${perfil.descripcion}</textarea>
 
                 </div>
 
@@ -390,7 +394,7 @@
                     <textarea
                             id="sobreMi"
                             name="sobreMi"
-                            placeholder="Cuéntanos más sobre ti, tus intereses, objetivos y experiencia..."></textarea>
+                            placeholder="Cuéntanos más sobre ti, tus intereses, objetivos y experiencia...">${perfil.sobreMi}</textarea>
 
                 </div>
 
@@ -546,27 +550,43 @@
                          ================================================= -->
 
                     <c:if test="${not empty perfil.foto}">
-                    <div class="foto-actual">
 
-                        <p>
-                            <strong>Foto actual:</strong>
-                        </p>
+                        <div class="foto-actual">
 
+                            <p>
+                                <strong>Foto actual:</strong>
+                            </p>
 
-                        <img
-                                class="profile-preview"
+                            <c:choose>
 
-                                src="${pageContext.request.contextPath}/publico/imagen/${perfil.foto}"
+                                <c:when test="${fn:startsWith(perfil.foto, 'http')}">
 
-                                alt="${perfil.nombre} ${perfil.apellidos}">
+                                    <img
+                                            class="profile-preview"
+                                            src="${perfil.foto}"
+                                            alt="${perfil.nombre} ${perfil.apellidos}">
 
-                    </div>
+                                </c:when>
+
+                                <c:otherwise>
+
+                                    <img
+                                            class="profile-preview"
+                                            src="${pageContext.request.contextPath}/publico/imagen/${perfil.foto}"
+                                            alt="${perfil.nombre} ${perfil.apellidos}">
+
+                                </c:otherwise>
+
+                            </c:choose>
+
+                        </div>
+
                     </c:if>
 
 
                 </div>
 
-            </div>F
+            </div>
 
 
 
@@ -592,7 +612,7 @@
                 <!-- CANCELAR -->
 
                 <a
-                        href="/admin"
+                        href="${pageContext.request.contextPath}/admin"
                         class="btn btn-cancelar">
 
                     ← Cancelar
