@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <!DOCTYPE html>
 <html lang="es">
 
@@ -242,22 +243,38 @@
 
                         <c:when test="${not empty perfil.foto}">
 
-                            <img
-                                    class="profile-photo"
+                            <c:choose>
 
-                                    src="${pageContext.request.contextPath}/publico/imagen/${perfil.foto}"
+                                <%-- Si la foto está en Cloudinary --%>
+                                <c:when test="${fn:startsWith(perfil.foto, 'http')}">
 
-                                    alt="${perfil.nombre} ${perfil.apellidos}">
+                                    <img
+                                            class="profile-photo"
+                                            src="${perfil.foto}"
+                                            alt="${perfil.nombre} ${perfil.apellidos}">
+
+                                </c:when>
+
+                                <%-- Si es una imagen antigua guardada localmente --%>
+                                <c:otherwise>
+
+                                    <img
+                                            class="profile-photo"
+                                            src="${pageContext.request.contextPath}/publico/imagen/${perfil.foto}"
+                                            alt="${perfil.nombre} ${perfil.apellidos}">
+
+                                </c:otherwise>
+
+                            </c:choose>
 
                         </c:when>
 
+                        <%-- Si no existe ninguna foto --%>
                         <c:otherwise>
 
                             <img
                                     class="profile-photo"
-
                                     src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=800&q=85"
-
                                     alt="Foto de perfil">
 
                         </c:otherwise>
