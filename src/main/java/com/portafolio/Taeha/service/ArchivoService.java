@@ -1,4 +1,5 @@
-package com.portafolio.Taeha.service;
+
+        package com.portafolio.Taeha.service;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
@@ -12,7 +13,6 @@ import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.Map;
 import java.util.UUID;
 
@@ -51,6 +51,7 @@ public class ArchivoService {
             );
         }
     }
+
 
     // =========================================================
     // GUARDAR IMAGEN EN CLOUDINARY
@@ -92,21 +93,12 @@ public class ArchivoService {
         }
     }
 
+
     // =========================================================
-    // GUARDAR ARCHIVOS NORMALES
+    // GUARDAR ARCHIVO / PDF EN CLOUDINARY
     // =========================================================
 
     public String guardarArchivo(MultipartFile archivo) {
-
-        return guardarArchivoLocal(
-                archivo,
-                carpetaArchivos
-        );
-    }
-
-    private String guardarArchivoLocal(
-            MultipartFile archivo,
-            Path carpeta) {
 
         if (archivo == null || archivo.isEmpty()) {
             return null;
@@ -117,14 +109,16 @@ public class ArchivoService {
             String nombreOriginal =
                     archivo.getOriginalFilename();
 
-            if (nombreOriginal == null
-                    || nombreOriginal.isBlank()) {
+            if (nombreOriginal == null ||
+                    nombreOriginal.isBlank()) {
 
                 throw new RuntimeException(
                         "El archivo no tiene nombre"
                 );
             }
 
+
+            // Obtener extensión
             String extension = "";
 
             int punto =
@@ -138,37 +132,47 @@ public class ArchivoService {
                                 .toLowerCase();
             }
 
+
+            // Nombre único para Cloudinary
             String nombreNuevo =
-                    UUID.randomUUID() + extension;
+                    UUID.randomUUID().toString();
 
-            Path destino =
-                    carpeta
-                            .resolve(nombreNuevo)
-                            .normalize();
 
-            if (!destino.startsWith(carpeta)) {
+            // Subir como archivo RAW
+            Map resultado =
+                    cloudinary.uploader().upload(
+                            archivo.getBytes(),
+                            ObjectUtils.asMap(
+                                    "resource_type", "raw",
+                                    "folder", "taeha/archivos",
+                                    "public_id",
+                                    nombreNuevo + extension
+                            )
+                    );
 
-                throw new RuntimeException(
-                        "Ruta de archivo no válida"
-                );
-            }
 
-            Files.copy(
-                    archivo.getInputStream(),
-                    destino,
-                    StandardCopyOption.REPLACE_EXISTING
-            );
+            String url =
+                    (String) resultado.get("secure_url");
 
-            return nombreNuevo;
+
+            System.out.println("======================================");
+            System.out.println("ARCHIVO SUBIDO A CLOUDINARY");
+            System.out.println("NOMBRE: " + nombreOriginal);
+            System.out.println("URL: " + url);
+            System.out.println("======================================");
+
+
+            return url;
 
         } catch (IOException e) {
 
             throw new RuntimeException(
-                    "Error al guardar el archivo",
+                    "Error al subir el archivo a Cloudinary",
                     e
             );
         }
     }
+
 
     // =========================================================
     // CARGAR IMAGEN
@@ -180,17 +184,18 @@ public class ArchivoService {
             return null;
         }
 
+
         // Si ya es una URL de Cloudinary
-        if (nombre.startsWith("http://")
-                || nombre.startsWith("https://")) {
+        if (nombre.startsWith("http://") ||
+                nombre.startsWith("https://")) {
 
             try {
 
                 Resource recurso =
                         new UrlResource(nombre);
 
-                if (recurso.exists()
-                        && recurso.isReadable()) {
+                if (recurso.exists() &&
+                        recurso.isReadable()) {
 
                     return recurso;
                 }
@@ -203,9 +208,8 @@ public class ArchivoService {
             return null;
         }
 
-        // Compatibilidad con imágenes antiguas
-        // que todavía estén guardadas localmente.
 
+        // Imagen antigua local
         Resource recurso =
                 cargar(
                         carpetaImagenes,
@@ -216,8 +220,8 @@ public class ArchivoService {
             return recurso;
         }
 
-        // Buscar también en static/imagenes
 
+        // Imagen incluida dentro de static
         try {
 
             Resource recursoStatic =
@@ -225,8 +229,8 @@ public class ArchivoService {
                             "static/imagenes/" + nombre
                     );
 
-            if (recursoStatic.exists()
-                    && recursoStatic.isReadable()) {
+            if (recursoStatic.exists() &&
+                    recursoStatic.isReadable()) {
 
                 return recursoStatic;
             }
@@ -239,17 +243,49 @@ public class ArchivoService {
         return null;
     }
 
+
     // =========================================================
-    // CARGAR ARCHIVO
+    // CARGAR ARCHIVO / PDF
     // =========================================================
 
     public Resource cargarArchivo(String nombre) {
 
+        if (nombre == null || nombre.isBlank()) {
+            return null;
+        }
+
+
+        // Si es una URL de Cloudinary
+        if (nombre.startsWith("http://") ||
+                nombre.startsWith("https://")) {
+
+            try {
+
+                Resource recurso =
+                        new UrlResource(nombre);
+
+                if (recurso.exists() &&
+                        recurso.isReadable()) {
+
+                    return recurso;
+                }
+
+            } catch (MalformedURLException e) {
+
+                return null;
+            }
+
+            return null;
+        }
+
+
+        // Archivo antiguo guardado localmente
         return cargar(
                 carpetaArchivos,
                 nombre
         );
     }
+
 
     // =========================================================
     // CARGAR ARCHIVO LOCAL
@@ -266,17 +302,20 @@ public class ArchivoService {
                             .resolve(nombre)
                             .normalize();
 
+
             if (!archivo.startsWith(carpeta)) {
                 return null;
             }
+
 
             Resource resource =
                     new UrlResource(
                             archivo.toUri()
                     );
 
-            if (resource.exists()
-                    && resource.isReadable()) {
+
+            if (resource.exists() &&
+                    resource.isReadable()) {
 
                 return resource;
             }
@@ -289,24 +328,24 @@ public class ArchivoService {
         }
     }
 
+
     // =========================================================
     // ELIMINAR IMAGEN
     // =========================================================
 
     public void eliminarImagen(String nombre) {
 
-        // Las imágenes de Cloudinary no se eliminan
-        // físicamente por ahora.
-        //
-        // Esto evita borrar accidentalmente imágenes
-        // que todavía pueden estar siendo utilizadas.
+        if (nombre == null ||
+                nombre.isBlank()) {
 
-        if (nombre == null || nombre.isBlank()) {
             return;
         }
 
-        if (nombre.startsWith("http://")
-                || nombre.startsWith("https://")) {
+
+        // Las imágenes de Cloudinary
+        // no se eliminan físicamente aquí
+        if (nombre.startsWith("http://") ||
+                nombre.startsWith("https://")) {
 
             System.out.println(
                     "Imagen anterior en Cloudinary: "
@@ -316,7 +355,6 @@ public class ArchivoService {
             return;
         }
 
-        // Compatibilidad con imágenes antiguas locales.
 
         eliminar(
                 carpetaImagenes,
@@ -324,17 +362,40 @@ public class ArchivoService {
         );
     }
 
+
     // =========================================================
     // ELIMINAR ARCHIVO
     // =========================================================
 
     public void eliminarArchivo(String nombre) {
 
+        if (nombre == null ||
+                nombre.isBlank()) {
+
+            return;
+        }
+
+
+        // Si es una URL de Cloudinary,
+        // no intentar eliminarla como archivo local
+        if (nombre.startsWith("http://") ||
+                nombre.startsWith("https://")) {
+
+            System.out.println(
+                    "Archivo anterior en Cloudinary: "
+                            + nombre
+            );
+
+            return;
+        }
+
+
         eliminar(
                 carpetaArchivos,
                 nombre
         );
     }
+
 
     // =========================================================
     // ELIMINAR ARCHIVO LOCAL
@@ -344,8 +405,8 @@ public class ArchivoService {
             Path carpeta,
             String nombre) {
 
-        if (nombre == null
-                || nombre.isBlank()) {
+        if (nombre == null ||
+                nombre.isBlank()) {
 
             return;
         }
@@ -357,11 +418,15 @@ public class ArchivoService {
                             .resolve(nombre)
                             .normalize();
 
+
             if (!archivo.startsWith(carpeta)) {
                 return;
             }
 
-            Files.deleteIfExists(archivo);
+
+            Files.deleteIfExists(
+                    archivo
+            );
 
         } catch (IOException e) {
 
@@ -373,3 +438,4 @@ public class ArchivoService {
         }
     }
 }
+

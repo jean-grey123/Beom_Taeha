@@ -1,4 +1,3 @@
-
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
@@ -150,6 +149,10 @@
             text-decoration: none;
         }
 
+        .archivo-actual a:hover {
+            text-decoration: underline;
+        }
+
         .botones {
             display: flex;
             gap: 10px;
@@ -222,26 +225,13 @@
 <body>
 
 
-<!-- =====================================================
-     SIDEBAR
-     ===================================================== -->
-
 <% request.setAttribute("activePage", "trabajos"); %>
 
 <%@ include file="../fragments/sidebar.jsp" %>
 
 
-
-<!-- =====================================================
-     CONTENIDO
-     ===================================================== -->
-
 <main class="content">
 
-
-    <!-- =================================================
-         ENCABEZADO
-         ================================================= -->
 
     <div class="header">
 
@@ -257,11 +247,6 @@
 
     </div>
 
-
-
-    <!-- =================================================
-         INFORMACIÓN DE LA SEMANA
-         ================================================= -->
 
     <div class="semana-info">
 
@@ -280,11 +265,6 @@
     </div>
 
 
-
-    <!-- =================================================
-         FORMULARIO
-         ================================================= -->
-
     <div class="form-container">
 
         <form
@@ -293,19 +273,11 @@
                 enctype="multipart/form-data">
 
 
-            <!-- =================================================
-                 ID
-                 ================================================= -->
-
             <input
                     type="hidden"
                     name="id"
                     value="${trabajo.id}">
 
-
-            <!-- =================================================
-                 SEMANA
-                 ================================================= -->
 
             <input
                     type="hidden"
@@ -313,17 +285,10 @@
                     value="${semana.id}">
 
 
-
-            <!-- =================================================
-                 INFORMACIÓN DEL TRABAJO
-                 ================================================= -->
-
             <div class="seccion">
 
                 <h2>📋 Información del trabajo</h2>
 
-
-                <!-- TÍTULO -->
 
                 <div class="campo">
 
@@ -341,9 +306,6 @@
 
                 </div>
 
-
-
-                <!-- DESCRIPCIÓN -->
 
                 <div class="campo">
 
@@ -365,9 +327,6 @@
 
                 </div>
 
-
-
-                <!-- ENLACE -->
 
                 <div class="campo">
 
@@ -392,20 +351,12 @@
             </div>
 
 
-
-            <!-- =================================================
-                 IMAGEN
-                 ================================================= -->
-
             <div class="seccion">
 
                 <h2>🖼️ Imagen del trabajo</h2>
 
-
                 <div class="archivo-box">
 
-
-                    <!-- SELECCIONAR IMAGEN -->
 
                     <div class="campo">
 
@@ -426,9 +377,6 @@
 
                     </div>
 
-
-
-                    <!-- IMAGEN ACTUAL -->
 
                     <c:if test="${not empty trabajo.imagen}">
 
@@ -471,11 +419,6 @@
             </div>
 
 
-
-            <!-- =================================================
-                 ARCHIVO
-                 ================================================= -->
-
             <div class="seccion">
 
                 <h2>📎 Archivo del trabajo</h2>
@@ -483,8 +426,6 @@
 
                 <div class="archivo-box">
 
-
-                    <!-- SELECCIONAR ARCHIVO -->
 
                     <div class="campo">
 
@@ -506,22 +447,43 @@
                     </div>
 
 
-
-                    <!-- ARCHIVO ACTUAL -->
-
                     <c:if test="${not empty trabajo.archivo}">
 
                         <div class="archivo-actual">
 
                             📎 <strong>Archivo actual:</strong>
 
-                            <a
-                                    href="${pageContext.request.contextPath}/admin/trabajos/archivo/${trabajo.archivo}"
-                                    target="_blank">
 
-                                Ver archivo
+                            <c:choose>
 
-                            </a>
+                                <c:when test="${fn:startsWith(trabajo.archivo, 'http')}">
+
+                                    <a
+                                            href="${trabajo.archivo}"
+                                            target="_blank"
+                                            rel="noopener noreferrer">
+
+                                        Ver archivo
+
+                                    </a>
+
+                                </c:when>
+
+                                <c:otherwise>
+
+                                    <a
+                                            href="${pageContext.request.contextPath}/admin/trabajos/archivo/${trabajo.archivo}"
+                                            target="_blank"
+                                            rel="noopener noreferrer">
+
+                                        Ver archivo
+
+                                    </a>
+
+                                </c:otherwise>
+
+                            </c:choose>
+
 
                         </div>
 
@@ -533,15 +495,8 @@
             </div>
 
 
-
-            <!-- =================================================
-                 BOTONES
-                 ================================================= -->
-
             <div class="botones">
 
-
-                <!-- GUARDAR -->
 
                 <button
                         type="submit"
@@ -555,9 +510,6 @@
 
                 </button>
 
-
-
-                <!-- CANCELAR -->
 
                 <a
                         class="btn btn-cancelar"
@@ -581,4 +533,3 @@
 </body>
 
 </html>
-

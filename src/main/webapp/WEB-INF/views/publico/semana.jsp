@@ -1,6 +1,8 @@
+
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -449,15 +451,13 @@
 
         <div class="week-header">
 
-
-            <div class="week-big-number"><c:if test="${semana.numero < 10}">0</c:if>${semana.numero}</div>
-
+            <div class="week-big-number">
+                <c:if test="${semana.numero < 10}">0</c:if>${semana.numero}
+            </div>
 
             <h1>${semana.titulo}</h1>
 
-
             <p>${semana.descripcion}</p>
-
 
         </div>
 
@@ -484,136 +484,169 @@
              ================================================= -->
 
         <c:if test="${not empty trabajos}">
-        <div class="works-grid">
 
-
-            <!-- =================================================
-                 TARJETA
-                 ================================================= -->
-
-            <c:forEach items="${trabajos}" var="trabajo">
-            <article class="work-card">
+            <div class="works-grid">
 
 
                 <!-- =================================================
-                     IMAGEN
+                     TARJETAS
                      ================================================= -->
 
-                <c:if test="${not empty trabajo.imagen}">
-                    <div>
+                <c:forEach items="${trabajos}" var="trabajo">
 
-                        <c:choose>
-
-                            <%-- Imagen nueva almacenada en Cloudinary --%>
-                            <c:when test="${fn:startsWith(trabajo.imagen, 'http')}">
-
-                                <img
-                                        class="work-image"
-                                        src="${trabajo.imagen}"
-                                        alt="${trabajo.titulo}">
-
-                            </c:when>
-
-                            <%-- Imagen antigua almacenada localmente --%>
-                            <c:otherwise>
-
-                                <img
-                                        class="work-image"
-                                        src="${pageContext.request.contextPath}/trabajos/imagen/${trabajo.imagen}"
-                                        alt="${trabajo.titulo}">
-
-                            </c:otherwise>
-
-                        </c:choose>
-
-                    </div>
-                </c:if>
+                    <article class="work-card">
 
 
-                <!-- SIN IMAGEN -->
+                        <!-- =================================================
+                             IMAGEN
+                             ================================================= -->
 
-                <c:if test="${empty trabajo.imagen}">
-                <div class="no-image">
+                        <c:if test="${not empty trabajo.imagen}">
 
-                    🖼️ Sin imagen
+                            <div>
 
-                </div>
-                </c:if>
+                                <c:choose>
 
+                                    <c:when test="${fn:startsWith(trabajo.imagen, 'http')}">
 
-                <!-- =================================================
-                     CONTENIDO
-                     ================================================= -->
+                                        <img
+                                                class="work-image"
+                                                src="${trabajo.imagen}"
+                                                alt="${trabajo.titulo}">
 
-                <div class="work-content">
+                                    </c:when>
 
+                                    <c:otherwise>
 
-                    <!-- TÍTULO -->
+                                        <img
+                                                class="work-image"
+                                                src="${pageContext.request.contextPath}/trabajos/imagen/${trabajo.imagen}"
+                                                alt="${trabajo.titulo}">
 
-                    <h3>${trabajo.titulo}</h3>
+                                    </c:otherwise>
 
+                                </c:choose>
 
-                    <!-- DESCRIPCIÓN -->
+                            </div>
 
-                    <c:if test="${not empty trabajo.descripcion}">
-                    <p>${trabajo.descripcion}</p>
-                    </c:if>
-
-
-                    <!-- =================================================
-                         RECURSOS
-                         ================================================= -->
-
-                    <div class="work-resources">
+                        </c:if>
 
 
-                        <!-- ENLACE -->
+                        <!-- SIN IMAGEN -->
 
-                        <c:if test="${not empty trabajo.enlace}">
-                        <a href="${trabajo.enlace}"
+                        <c:if test="${empty trabajo.imagen}">
 
-                                target="_blank"
+                            <div class="no-image">
 
-                                rel="noopener noreferrer"
+                                🖼️ Sin imagen
 
-                                class="work-link">
+                            </div>
 
-                            🔗 Ver proyecto
-
-                        </a>
                         </c:if>
 
 
                         <!-- =================================================
-                             ARCHIVO
+                             CONTENIDO
                              ================================================= -->
 
-                        <c:if test="${not empty trabajo.archivo}">
-                        <a href="${pageContext.request.contextPath}/trabajos/archivo/${trabajo.archivo}"
-
-                                target="_blank"
-
-                                rel="noopener noreferrer"
-
-                                class="work-link">
-
-                            📄 Ver archivo
-
-                        </a>
-                        </c:if>
+                        <div class="work-content">
 
 
-                    </div>
+                            <!-- TÍTULO -->
+
+                            <h3>${trabajo.titulo}</h3>
 
 
-                </div>
+                            <!-- DESCRIPCIÓN -->
+
+                            <c:if test="${not empty trabajo.descripcion}">
+
+                                <p>
+                                        ${trabajo.descripcion}
+                                </p>
+
+                            </c:if>
 
 
-            </article>
-            </c:forEach>
+                            <!-- =================================================
+                                 RECURSOS
+                                 ================================================= -->
+
+                            <div class="work-resources">
 
 
-        </div>
+                                <!-- ENLACE -->
+
+                                <c:if test="${not empty trabajo.enlace}">
+
+                                    <a
+                                            href="${trabajo.enlace}"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            class="work-link">
+
+                                        🔗 Ver proyecto
+
+                                    </a>
+
+                                </c:if>
+
+
+                                <!-- =================================================
+                                     ARCHIVO / PDF
+                                     ================================================= -->
+
+                                <c:if test="${not empty trabajo.archivo}">
+
+                                    <c:choose>
+
+                                        <c:when test="${fn:startsWith(trabajo.archivo, 'http')}">
+
+                                            <a
+                                                    href="${trabajo.archivo}"
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    class="work-link">
+
+                                                📄 Ver archivo
+
+                                            </a>
+
+                                        </c:when>
+
+
+                                        <c:otherwise>
+
+                                            <a
+                                                    href="${pageContext.request.contextPath}/trabajos/archivo/${trabajo.archivo}"
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    class="work-link">
+
+                                                📄 Ver archivo
+
+                                            </a>
+
+                                        </c:otherwise>
+
+                                    </c:choose>
+
+                                </c:if>
+
+
+                            </div>
+
+
+                        </div>
+
+
+                    </article>
+
+                </c:forEach>
+
+
+            </div>
+
         </c:if>
 
 
@@ -622,21 +655,23 @@
              ================================================= -->
 
         <c:if test="${empty trabajos}">
-        <div class="no-works">
 
-            <h3>
-                📚 Todavía no hay trabajos
-            </h3>
+            <div class="no-works">
 
-            <p>
+                <h3>
+                    📚 Todavía no hay trabajos
+                </h3>
 
-                Los trabajos de esta semana aparecerán
-                aquí cuando sean agregados desde el
-                panel administrativo.
+                <p>
 
-            </p>
+                    Los trabajos de esta semana aparecerán
+                    aquí cuando sean agregados desde el
+                    panel administrativo.
 
-        </div>
+                </p>
+
+            </div>
+
         </c:if>
 
 
@@ -673,3 +708,4 @@
 </body>
 
 </html>
+

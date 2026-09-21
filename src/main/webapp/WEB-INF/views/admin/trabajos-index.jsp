@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -25,19 +26,11 @@
             color: #111827;
         }
 
-        /* =====================================================
-           CONTENIDO PRINCIPAL
-           ===================================================== */
-
         .content {
             margin-left: 250px;
             padding: 35px;
             min-height: 100vh;
         }
-
-        /* =====================================================
-           ENCABEZADO
-           ===================================================== */
 
         .header {
             background: white;
@@ -59,10 +52,6 @@
             font-size: 15px;
         }
 
-        /* =====================================================
-           GRID DE SEMANAS
-           ===================================================== */
-
         .weeks-grid {
             display: grid;
             grid-template-columns:
@@ -70,10 +59,6 @@
 
             gap: 20px;
         }
-
-        /* =====================================================
-           TARJETA DE SEMANA
-           ===================================================== */
 
         .week-card {
             display: block;
@@ -106,10 +91,6 @@
                     0 8px 20px rgba(0, 0, 0, 0.12);
         }
 
-        /* =====================================================
-           NUMERO DE SEMANA
-           ===================================================== */
-
         .week-number {
             display: inline-block;
 
@@ -128,10 +109,6 @@
             margin-bottom: 15px;
         }
 
-        /* =====================================================
-           TITULO
-           ===================================================== */
-
         .week-card h2 {
             margin: 0 0 10px;
 
@@ -139,10 +116,6 @@
 
             color: #111827;
         }
-
-        /* =====================================================
-           DESCRIPCION
-           ===================================================== */
 
         .week-card p {
             margin: 0;
@@ -156,10 +129,6 @@
             min-height: 42px;
         }
 
-        /* =====================================================
-           BOTON
-           ===================================================== */
-
         .view-button {
             display: inline-block;
 
@@ -171,10 +140,6 @@
 
             font-weight: bold;
         }
-
-        /* =====================================================
-           CUANDO NO EXISTEN SEMANAS
-           ===================================================== */
 
         .empty {
             background: white;
@@ -188,10 +153,6 @@
             color: #6b7280;
         }
 
-        /* =====================================================
-           RESPONSIVE
-           ===================================================== */
-
         @media (max-width: 700px) {
 
             .content {
@@ -203,6 +164,7 @@
             .weeks-grid {
                 grid-template-columns: 1fr;
             }
+
         }
 
         @media (max-width: 500px) {
@@ -216,6 +178,7 @@
             .header h1 {
                 font-size: 24px;
             }
+
         }
 
     </style>
@@ -224,21 +187,14 @@
 
 <body>
 
-<!-- =====================================================
-     SIDEBAR
-     ===================================================== -->
 
 <% request.setAttribute("activePage", "trabajos"); %>
+
 <%@ include file="../fragments/sidebar.jsp" %>
 
 
-<!-- =====================================================
-     CONTENIDO
-     ===================================================== -->
-
 <main class="content">
 
-    <!-- ENCABEZADO -->
 
     <section class="header">
 
@@ -254,71 +210,67 @@
     </section>
 
 
-    <!-- =================================================
-         SEMANAS
-         ================================================= -->
-
     <c:if test="${not empty semanas}">
-    <section class="weeks-grid">
 
-        <!-- =================================================
-             CADA SEMANA
-             ================================================= -->
-
-        <c:forEach items="${semanas}" var="semana">
-        <a href="${pageContext.request.contextPath}/admin/trabajos/semana/${semana.id}"
-
-           class="week-card">
+        <section class="weeks-grid">
 
 
-            <!-- NUMERO -->
+            <c:forEach items="${semanas}" var="semana">
 
-            <span class="week-number">Semana ${semana.numero}</span>
-
-
-            <!-- TITULO -->
-
-            <h2>${semana.titulo}</h2>
+                <a
+                        href="${pageContext.request.contextPath}/admin/trabajos/semana/${semana.id}"
+                        class="week-card">
 
 
-            <!-- DESCRIPCION -->
+                    <span class="week-number">
+                        Semana ${semana.numero}
+                    </span>
 
-            <p>${semana.descripcion}</p>
+
+                    <h2>
+                            ${semana.titulo}
+                    </h2>
 
 
-            <!-- BOTON -->
+                    <p>
+                            ${semana.descripcion}
+                    </p>
 
-            <span class="view-button">
 
-                    Ver trabajos →
+                    <span class="view-button">
 
-                </span>
+                        Ver trabajos →
 
-        </a>
-        </c:forEach>
+                    </span>
 
-    </section>
+
+                </a>
+
+            </c:forEach>
+
+
+        </section>
+
     </c:if>
 
-
-    <!-- =================================================
-         SI NO HAY SEMANAS
-         ================================================= -->
 
     <c:if test="${empty semanas}">
-    <section class="empty">
 
-        <h2>
-            No hay semanas registradas
-        </h2>
+        <section class="empty">
 
-        <p>
-            Primero debes crear las semanas
-            desde el apartado Semanas.
-        </p>
+            <h2>
+                No hay semanas registradas
+            </h2>
 
-    </section>
+            <p>
+                Primero debes crear las semanas
+                desde el apartado Semanas.
+            </p>
+
+        </section>
+
     </c:if>
+
 
 </main>
 

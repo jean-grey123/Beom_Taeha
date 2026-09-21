@@ -1,4 +1,3 @@
-
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
@@ -28,19 +27,11 @@
             color: #111827;
         }
 
-        /* =====================================================
-           CONTENIDO
-           ===================================================== */
-
         .content {
             margin-left: 270px;
             padding: 35px;
             min-height: 100vh;
         }
-
-        /* =====================================================
-           ENCABEZADO
-           ===================================================== */
 
         .header {
             margin-bottom: 25px;
@@ -55,10 +46,6 @@
             color: #6b7280;
             margin-top: 8px;
         }
-
-        /* =====================================================
-           BOTONES SUPERIORES
-           ===================================================== */
 
         .acciones {
             display: flex;
@@ -98,10 +85,6 @@
             background: #4b5563;
         }
 
-        /* =====================================================
-           CONTENEDOR DE TRABAJOS
-           ===================================================== */
-
         .trabajos-container {
             display: grid;
             grid-template-columns: repeat(
@@ -110,10 +93,6 @@
             );
             gap: 25px;
         }
-
-        /* =====================================================
-           TARJETA
-           ===================================================== */
 
         .trabajo-card {
             background: white;
@@ -127,10 +106,6 @@
             transform: translateY(-3px);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
         }
-
-        /* =====================================================
-           IMAGEN
-           ===================================================== */
 
         .imagen-trabajo {
             width: 100%;
@@ -150,10 +125,6 @@
             font-size: 16px;
         }
 
-        /* =====================================================
-           INFORMACIÓN
-           ===================================================== */
-
         .trabajo-body {
             padding: 20px;
         }
@@ -170,10 +141,6 @@
             white-space: pre-line;
         }
 
-        /* =====================================================
-           RECURSOS
-           ===================================================== */
-
         .recursos {
             margin-top: 15px;
         }
@@ -189,10 +156,6 @@
         .recursos a:hover {
             text-decoration: underline;
         }
-
-        /* =====================================================
-           ACCIONES DE TARJETA
-           ===================================================== */
 
         .acciones-card {
             display: flex;
@@ -219,10 +182,6 @@
             background: #b91c1c;
         }
 
-        /* =====================================================
-           SIN TRABAJOS
-           ===================================================== */
-
         .vacio {
             background: white;
             padding: 45px;
@@ -239,10 +198,6 @@
             color: #6b7280;
             margin-bottom: 25px;
         }
-
-        /* =====================================================
-           RESPONSIVE
-           ===================================================== */
 
         @media (max-width: 1000px) {
 
@@ -304,48 +259,29 @@
 
 </head>
 
-
 <body>
-
-
-<!-- =====================================================
-     SIDEBAR
-     ===================================================== -->
 
 <% request.setAttribute("activePage", "trabajos"); %>
 
 <%@ include file="../fragments/sidebar.jsp" %>
 
 
-<!-- =====================================================
-     CONTENIDO
-     ===================================================== -->
-
 <main class="content">
 
-
-    <!-- =====================================================
-         ENCABEZADO
-         ===================================================== -->
 
     <div class="header">
 
         <h1>
-
             💼 Trabajos - Semana
-
             <span>${semana.numero}</span>
-
         </h1>
 
-        <p>${semana.titulo}</p>
+        <p>
+            ${semana.titulo}
+        </p>
 
     </div>
 
-
-    <!-- =====================================================
-         BOTONES
-         ===================================================== -->
 
     <div class="acciones">
 
@@ -368,10 +304,6 @@
 
     </div>
 
-
-    <!-- =====================================================
-         SIN TRABAJOS
-         ===================================================== -->
 
     <c:if test="${empty trabajos}">
 
@@ -398,10 +330,6 @@
     </c:if>
 
 
-    <!-- =====================================================
-         LISTA DE TRABAJOS
-         ===================================================== -->
-
     <c:if test="${not empty trabajos}">
 
         <div class="trabajos-container">
@@ -411,10 +339,6 @@
 
                 <div class="trabajo-card">
 
-
-                    <!-- =================================================
-                         IMAGEN DEL TRABAJO
-                         ================================================= -->
 
                     <c:if test="${not empty trabajo.imagen}">
 
@@ -435,7 +359,7 @@
 
                                     <img
                                             class="imagen-trabajo"
-                                            src="${pageContext.request.contextPath}/trabajos/imagen/${trabajo.imagen}"
+                                            src="${pageContext.request.contextPath}/admin/trabajos/imagen/${trabajo.imagen}"
                                             alt="${trabajo.titulo}">
 
                                 </c:otherwise>
@@ -446,8 +370,6 @@
 
                     </c:if>
 
-
-                    <!-- SIN IMAGEN -->
 
                     <c:if test="${empty trabajo.imagen}">
 
@@ -460,14 +382,12 @@
                     </c:if>
 
 
-                    <!-- =================================================
-                         INFORMACIÓN
-                         ================================================= -->
-
                     <div class="trabajo-body">
 
 
-                        <h2>${trabajo.titulo}</h2>
+                        <h2>
+                                ${trabajo.titulo}
+                        </h2>
 
 
                         <c:if test="${not empty trabajo.descripcion}">
@@ -478,10 +398,6 @@
 
                         </c:if>
 
-
-                        <!-- =================================================
-                             RECURSOS
-                             ================================================= -->
 
                         <div class="recursos">
 
@@ -502,24 +418,41 @@
 
                             <c:if test="${not empty trabajo.archivo}">
 
-                                <a
-                                        href="${pageContext.request.contextPath}/trabajos/archivo/${trabajo.archivo}"
-                                        target="_blank"
-                                        rel="noopener noreferrer">
+                                <c:choose>
 
-                                    📎 Ver archivo
+                                    <c:when test="${fn:startsWith(trabajo.archivo, 'http')}">
 
-                                </a>
+                                        <a
+                                                href="${trabajo.archivo}"
+                                                target="_blank"
+                                                rel="noopener noreferrer">
+
+                                            📎 Ver archivo
+
+                                        </a>
+
+                                    </c:when>
+
+                                    <c:otherwise>
+
+                                        <a
+                                                href="${pageContext.request.contextPath}/admin/trabajos/archivo/${trabajo.archivo}"
+                                                target="_blank"
+                                                rel="noopener noreferrer">
+
+                                            📎 Ver archivo
+
+                                        </a>
+
+                                    </c:otherwise>
+
+                                </c:choose>
 
                             </c:if>
 
 
                         </div>
 
-
-                        <!-- =================================================
-                             ACCIONES
-                             ================================================= -->
 
                         <div class="acciones-card">
 
@@ -564,4 +497,3 @@
 </body>
 
 </html>
-
