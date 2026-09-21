@@ -454,8 +454,10 @@
 
                     <!-- RESPONDER -->
 
-                    <a href="mailto:${mensaje.correo}"
-                            class="btn btn-primary">
+                    <a href="https://mail.google.com/mail/?view=cm&fs=1&to=${mensaje.correo}"
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       class="btn btn-primary">
 
                         ✉️ Responder por correo
 
