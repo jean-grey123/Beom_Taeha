@@ -1,8 +1,14 @@
+package com.portafolio.Taeha.service;
 
-        package com.portafolio.Taeha.service;
-
-import com.cloudinary.Cloudinary;
-import com.cloudinary.utils.ObjectUtils;
+import com.azure.core.util.BinaryData;
+import com.azure.identity.ManagedIdentityCredentialBuilder;
+import com.azure.storage.blob.BlobClient;
+import com.azure.storage.blob.BlobContainerClient;
+import com.azure.storage.blob.BlobServiceClientBuilder;
+import com.azure.storage.blob.models.BlobStorageException;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
@@ -13,429 +19,239 @@ import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Map;
+import java.util.Locale;
 import java.util.UUID;
 
 @Service
 public class ArchivoService {
 
-    private final Path carpetaImagenes;
-    private final Path carpetaArchivos;
+    private final BlobContainerClient contenedor;
 
-    private final Cloudinary cloudinary;
+    private final Path carpetaImagenes =
+            Paths.get("uploads", "imagenes")
+                    .toAbsolutePath().normalize();
 
-    public ArchivoService(Cloudinary cloudinary) {
+    private final Path carpetaArchivos =
+            Paths.get("uploads", "archivos")
+                    .toAbsolutePath().normalize();
 
-        this.cloudinary = cloudinary;
+    public ArchivoService(
+            @Value("${AZURE_STORAGE_BLOB_ENDPOINT}") String endpoint,
+            @Value("${AZURE_STORAGE_CONTAINER}") String nombreContenedor) {
 
-        this.carpetaImagenes =
-                Paths.get("uploads", "imagenes")
-                        .toAbsolutePath()
-                        .normalize();
-
-        this.carpetaArchivos =
-                Paths.get("uploads", "archivos")
-                        .toAbsolutePath()
-                        .normalize();
-
-        try {
-
-            Files.createDirectories(carpetaImagenes);
-            Files.createDirectories(carpetaArchivos);
-
-        } catch (IOException e) {
-
-            throw new RuntimeException(
-                    "No se pudieron crear las carpetas de archivos",
-                    e
-            );
-        }
+        this.contenedor = new BlobServiceClientBuilder()
+                .endpoint(endpoint)
+                .credential(
+                        new ManagedIdentityCredentialBuilder().build()
+                )
+                .buildClient()
+                .getBlobContainerClient(nombreContenedor);
     }
 
-
-    // =========================================================
-    // GUARDAR IMAGEN EN CLOUDINARY
-    // =========================================================
-
+    // Guardar imágenes nuevas en Azure.
     public String guardarImagen(MultipartFile archivo) {
-
-        if (archivo == null || archivo.isEmpty()) {
-            return null;
-        }
-
-        try {
-
-            Map resultado =
-                    cloudinary.uploader().upload(
-                            archivo.getBytes(),
-                            ObjectUtils.asMap(
-                                    "resource_type", "image",
-                                    "folder", "taeha/imagenes"
-                            )
-                    );
-
-            String url =
-                    (String) resultado.get("secure_url");
-
-            System.out.println("======================================");
-            System.out.println("IMAGEN SUBIDA A CLOUDINARY");
-            System.out.println("URL: " + url);
-            System.out.println("======================================");
-
-            return url;
-
-        } catch (IOException e) {
-
-            throw new RuntimeException(
-                    "Error al subir la imagen a Cloudinary",
-                    e
-            );
-        }
+        return guardar(archivo, "imagenes");
     }
 
-
-    // =========================================================
-    // GUARDAR ARCHIVO / PDF EN CLOUDINARY
-    // =========================================================
-
+    // Guardar documentos nuevos en Azure.
     public String guardarArchivo(MultipartFile archivo) {
+        return guardar(archivo, "archivos");
+    }
 
+    private String guardar(MultipartFile archivo, String carpeta) {
         if (archivo == null || archivo.isEmpty()) {
             return null;
         }
 
-        try {
+        String original = archivo.getOriginalFilename();
+        String extension = "";
 
-            String nombreOriginal =
-                    archivo.getOriginalFilename();
-
-            if (nombreOriginal == null ||
-                    nombreOriginal.isBlank()) {
-
-                throw new RuntimeException(
-                        "El archivo no tiene nombre"
-                );
-            }
-
-
-            // Obtener extensión
-            String extension = "";
-
-            int punto =
-                    nombreOriginal.lastIndexOf(".");
+        if (original != null) {
+            int punto = original.lastIndexOf('.');
 
             if (punto >= 0) {
+                String candidata = original.substring(punto)
+                        .toLowerCase(Locale.ROOT);
 
-                extension =
-                        nombreOriginal
-                                .substring(punto)
-                                .toLowerCase();
+                if (candidata.matches("\\.[a-z0-9]{1,10}")) {
+                    extension = candidata;
+                }
             }
+        }
 
+        String nombre = "az-" + UUID.randomUUID() + extension;
 
-            // Nombre único para Cloudinary
-            String nombreNuevo =
-                    UUID.randomUUID().toString();
+        try {
+            BlobClient blob = contenedor.getBlobClient(
+                    carpeta + "/" + nombre
+            );
 
+            blob.upload(BinaryData.fromBytes(archivo.getBytes()), false);
 
-            // Subir como archivo RAW
-            Map resultado =
-                    cloudinary.uploader().upload(
-                            archivo.getBytes(),
-                            ObjectUtils.asMap(
-                                    "resource_type", "raw",
-                                    "folder", "taeha/archivos",
-                                    "public_id",
-                                    nombreNuevo + extension
-                            )
-                    );
-
-
-            String url =
-                    (String) resultado.get("secure_url");
-
-
-            System.out.println("======================================");
-            System.out.println("ARCHIVO SUBIDO A CLOUDINARY");
-            System.out.println("NOMBRE: " + nombreOriginal);
-            System.out.println("URL: " + url);
-            System.out.println("======================================");
-
-
-            return url;
+            // Se guarda un nombre estable en MySQL.
+            // La aplicación lee el blob privado mediante su identidad.
+            return nombre;
 
         } catch (IOException e) {
-
-            throw new RuntimeException(
-                    "Error al subir el archivo a Cloudinary",
-                    e
+            throw new IllegalStateException(
+                    "No se pudo leer el archivo para subirlo a Azure", e
             );
         }
     }
-
-
-    // =========================================================
-    // CARGAR IMAGEN
-    // =========================================================
 
     public Resource cargarImagen(String nombre) {
-
-        if (nombre == null || nombre.isBlank()) {
+        if (vacio(nombre)) {
             return null;
         }
 
+        if (esAzure(nombre)) {
+            return cargarAzure("imagenes", nombre);
+        }
 
-        // Si ya es una URL de Cloudinary
-        if (nombre.startsWith("http://") ||
-                nombre.startsWith("https://")) {
+        // Mantiene los enlaces anteriores durante la migración.
+        if (esUrl(nombre)) {
+            return cargarUrl(nombre);
+        }
 
-            try {
+        Resource local = cargarLocal(carpetaImagenes, nombre);
 
-                Resource recurso =
-                        new UrlResource(nombre);
+        if (local != null) {
+            return local;
+        }
 
-                if (recurso.exists() &&
-                        recurso.isReadable()) {
-
-                    return recurso;
-                }
-
-            } catch (MalformedURLException e) {
-
-                return null;
-            }
-
+        if (!nombre.matches("[a-zA-Z0-9._-]+")) {
             return null;
         }
 
+        Resource recurso = new ClassPathResource(
+                "static/imagenes/" + nombre
+        );
 
-        // Imagen antigua local
-        Resource recurso =
-                cargar(
-                        carpetaImagenes,
-                        nombre
-                );
-
-        if (recurso != null) {
-            return recurso;
-        }
-
-
-        // Imagen incluida dentro de static
-        try {
-
-            Resource recursoStatic =
-                    new org.springframework.core.io.ClassPathResource(
-                            "static/imagenes/" + nombre
-                    );
-
-            if (recursoStatic.exists() &&
-                    recursoStatic.isReadable()) {
-
-                return recursoStatic;
-            }
-
-        } catch (Exception e) {
-
-            return null;
-        }
-
-        return null;
+        return recurso.exists() && recurso.isReadable()
+                ? recurso : null;
     }
-
-
-    // =========================================================
-    // CARGAR ARCHIVO / PDF
-    // =========================================================
 
     public Resource cargarArchivo(String nombre) {
-
-        if (nombre == null || nombre.isBlank()) {
+        if (vacio(nombre)) {
             return null;
         }
 
-
-        // Si es una URL de Cloudinary
-        if (nombre.startsWith("http://") ||
-                nombre.startsWith("https://")) {
-
-            try {
-
-                Resource recurso =
-                        new UrlResource(nombre);
-
-                if (recurso.exists() &&
-                        recurso.isReadable()) {
-
-                    return recurso;
-                }
-
-            } catch (MalformedURLException e) {
-
-                return null;
-            }
-
-            return null;
+        if (esAzure(nombre)) {
+            return cargarAzure("archivos", nombre);
         }
 
+        if (esUrl(nombre)) {
+            return cargarUrl(nombre);
+        }
 
-        // Archivo antiguo guardado localmente
-        return cargar(
-                carpetaArchivos,
-                nombre
-        );
+        return cargarLocal(carpetaArchivos, nombre);
     }
 
-
-    // =========================================================
-    // CARGAR ARCHIVO LOCAL
-    // =========================================================
-
-    private Resource cargar(
-            Path carpeta,
-            String nombre) {
-
+    private Resource cargarAzure(String carpeta, String nombre) {
         try {
+            byte[] contenido = contenedor
+                    .getBlobClient(carpeta + "/" + nombre)
+                    .downloadContent()
+                    .toBytes();
 
-            Path archivo =
-                    carpeta
-                            .resolve(nombre)
-                            .normalize();
+            return new ByteArrayResource(contenido) {
+                @Override
+                public String getFilename() {
+                    return nombre;
+                }
+            };
 
-
-            if (!archivo.startsWith(carpeta)) {
+        } catch (BlobStorageException e) {
+            if (e.getStatusCode() == 404) {
                 return null;
             }
 
+            throw e;
+        }
+    }
 
-            Resource resource =
-                    new UrlResource(
-                            archivo.toUri()
-                    );
+    private Resource cargarUrl(String url) {
+        try {
+            Resource recurso = new UrlResource(url);
 
-
-            if (resource.exists() &&
-                    resource.isReadable()) {
-
-                return resource;
-            }
-
-            return null;
+            return recurso.exists() && recurso.isReadable()
+                    ? recurso : null;
 
         } catch (MalformedURLException e) {
-
             return null;
         }
     }
 
+    private Resource cargarLocal(Path carpeta, String nombre) {
+        Path archivo = carpeta.resolve(nombre).normalize();
 
-    // =========================================================
-    // ELIMINAR IMAGEN
-    // =========================================================
+        if (!archivo.startsWith(carpeta)) {
+            return null;
+        }
+
+        try {
+            Resource recurso = new UrlResource(archivo.toUri());
+
+            return recurso.exists() && recurso.isReadable()
+                    ? recurso : null;
+
+        } catch (MalformedURLException e) {
+            return null;
+        }
+    }
 
     public void eliminarImagen(String nombre) {
-
-        if (nombre == null ||
-                nombre.isBlank()) {
-
-            return;
-        }
-
-
-        // Las imágenes de Cloudinary
-        // no se eliminan físicamente aquí
-        if (nombre.startsWith("http://") ||
-                nombre.startsWith("https://")) {
-
-            System.out.println(
-                    "Imagen anterior en Cloudinary: "
-                            + nombre
-            );
-
-            return;
-        }
-
-
-        eliminar(
-                carpetaImagenes,
-                nombre
-        );
+        eliminar("imagenes", carpetaImagenes, nombre);
     }
-
-
-    // =========================================================
-    // ELIMINAR ARCHIVO
-    // =========================================================
 
     public void eliminarArchivo(String nombre) {
-
-        if (nombre == null ||
-                nombre.isBlank()) {
-
-            return;
-        }
-
-
-        // Si es una URL de Cloudinary,
-        // no intentar eliminarla como archivo local
-        if (nombre.startsWith("http://") ||
-                nombre.startsWith("https://")) {
-
-            System.out.println(
-                    "Archivo anterior en Cloudinary: "
-                            + nombre
-            );
-
-            return;
-        }
-
-
-        eliminar(
-                carpetaArchivos,
-                nombre
-        );
+        eliminar("archivos", carpetaArchivos, nombre);
     }
 
-
-    // =========================================================
-    // ELIMINAR ARCHIVO LOCAL
-    // =========================================================
-
     private void eliminar(
-            Path carpeta,
+            String carpetaAzure,
+            Path carpetaLocal,
             String nombre) {
 
-        if (nombre == null ||
-                nombre.isBlank()) {
+        if (vacio(nombre) || esUrl(nombre)) {
+            return;
+        }
 
+        if (esAzure(nombre)) {
+            contenedor.getBlobClient(
+                    carpetaAzure + "/" + nombre
+            ).deleteIfExists();
+
+            return;
+        }
+
+        Path archivo = carpetaLocal.resolve(nombre).normalize();
+
+        if (!archivo.startsWith(carpetaLocal)) {
             return;
         }
 
         try {
-
-            Path archivo =
-                    carpeta
-                            .resolve(nombre)
-                            .normalize();
-
-
-            if (!archivo.startsWith(carpeta)) {
-                return;
-            }
-
-
-            Files.deleteIfExists(
-                    archivo
-            );
-
+            Files.deleteIfExists(archivo);
         } catch (IOException e) {
-
-            throw new RuntimeException(
-                    "No se pudo eliminar el archivo: "
-                            + nombre,
-                    e
+            throw new IllegalStateException(
+                    "No se pudo eliminar el archivo local", e
             );
         }
     }
-}
 
+    private boolean esAzure(String nombre) {
+        return nombre.matches(
+                "az-[0-9a-fA-F-]{36}(\\.[a-z0-9]{1,10})?"
+        );
+    }
+
+    private boolean esUrl(String nombre) {
+        return nombre.startsWith("https://")
+                || nombre.startsWith("http://");
+    }
+
+    private boolean vacio(String nombre) {
+        return nombre == null || nombre.isBlank();
+    }
+}
