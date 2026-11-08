@@ -17,6 +17,7 @@
 	<groupId>com.portafolio</groupId>
 	<artifactId>Taeha</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<packaging>war</packaging>
 
 	<name>Portafolio Sebastian</name>
 	<description>
@@ -25,7 +26,7 @@
 
 	<!-- Java -->
 	<properties>
-		<java.version>26</java.version>
+		<java.version>25</java.version>
 	</properties>
 
 	<dependencies>
