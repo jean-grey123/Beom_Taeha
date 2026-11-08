@@ -1,63 +1,66 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
-name: Build and deploy JAR app to Azure Web App - portafolio-sebastian-rivas
+name: Compilar y desplegar portafolio en Azure
 
 on:
   push:
     branches:
-      - 'main'
+      - main
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read #This is required for actions/checkout
+      contents: read
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Descargar código
+        uses: actions/checkout@v4
 
-      - name: Set up Java version
+      - name: Configurar Java 25
         uses: actions/setup-java@v4
         with:
-          java-version: 'java25'
-          distribution: 'microsoft'
+          java-version: '25'
+          distribution: 'temurin'
+          cache: 'maven'
 
-      - name: Build with Maven
-        run: mvn clean install
+      - name: Compilar con Maven
+        run: mvn -B clean package -DskipTests
 
-      - name: Upload artifact for deployment job
+      - name: Preparar aplicación ejecutable
+        run: |
+          mkdir -p deploy
+          cp target/Taeha-0.0.1-SNAPSHOT.war deploy/app.jar
+
+      - name: Guardar aplicación compilada
         uses: actions/upload-artifact@v4
         with:
           name: java-app
-          path: '${{ github.workspace }}/target/*.jar'
+          path: deploy/app.jar
+          if-no-files-found: error
 
   deploy:
     runs-on: ubuntu-latest
     needs: build
     permissions:
-      id-token: write #This is required for requesting the JWT
-      contents: read #This is required for actions/checkout
-  
+      id-token: write
+      contents: read
+
     steps:
-      - name: Download artifact from build job
+      - name: Descargar aplicación compilada
         uses: actions/download-artifact@v4
         with:
           name: java-app
-      
-      - name: Login to Azure
+
+      - name: Iniciar sesión en Azure
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_0B40663693024FF9B225D0FE89D781CC }}
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_C0FDF477A4C248329C9ECD7D7272CD25 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_C3AB3BB9CF5C4843815DEF914D39D7E4 }}
 
-      - name: Deploy to Azure Web App
-        id: deploy-to-webapp
+      - name: Desplegar en Azure
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'portafolio-sebastian-rivas'
           slot-name: 'Production'
-          package: '*.jar'
-          
+          package: 'app.jar'
